@@ -23,11 +23,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let model = settingsStore.load()
         let audioEngineManager = AudioEngineManager()
         self.audioEngineManager = audioEngineManager
+        let hotkeyManager = HotkeyManager()
 
         let environment = Environment(
             audioEngine: audioEngineManager,
             settingsStore: settingsStore,
-            hotkeyManager: HotkeyManager(),
+            hotkeyManager: hotkeyManager,
             permissionsManager: PermissionsManager(),
             logger: { message in
                 NSLog("[DevNoise] %@", message)
@@ -38,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         let store = Store(initialModel: model, environment: environment)
+        store.bindHotkeyHandler(to: hotkeyManager)
         self.store = store
         statusBarController = StatusBarController(store: store)
         bindRemapCapture(store: store)
