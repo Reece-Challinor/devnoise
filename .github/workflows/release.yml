@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    env:
+      DEVNOISE_SIGN_IDENTITY: ${{ secrets.DEVNOISE_SIGN_IDENTITY }}
+      DEVNOISE_NOTARY_APPLE_ID: ${{ secrets.DEVNOISE_NOTARY_APPLE_ID }}
+      DEVNOISE_NOTARY_TEAM_ID: ${{ secrets.DEVNOISE_NOTARY_TEAM_ID }}
+      DEVNOISE_NOTARY_APP_PASSWORD: ${{ secrets.DEVNOISE_NOTARY_APP_PASSWORD }}
+      DEVNOISE_CERTIFICATE_P12_BASE64: ${{ secrets.DEVNOISE_CERTIFICATE_P12_BASE64 }}
+      DEVNOISE_CERTIFICATE_P12_PASSWORD: ${{ secrets.DEVNOISE_CERTIFICATE_P12_PASSWORD }}
+      DEVNOISE_KEYCHAIN_PASSWORD: ${{ secrets.DEVNOISE_KEYCHAIN_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            DEVNOISE_SIGN_IDENTITY
+            DEVNOISE_NOTARY_APPLE_ID
+            DEVNOISE_NOTARY_TEAM_ID
+            DEVNOISE_NOTARY_APP_PASSWORD
+            DEVNOISE_CERTIFICATE_P12_BASE64
+            DEVNOISE_CERTIFICATE_P12_PASSWORD
+            DEVNOISE_KEYCHAIN_PASSWORD
+          )
+
+          for var_name in "${required[@]}"; do
+            if [[ -z "${!var_name:-}" ]]; then
+              echo "Missing required secret: ${var_name}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Configure signing keychain
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYCHAIN_PATH="${RUNNER_TEMP}/devnoise-signing.keychain-db"
+          CERT_PATH="${RUNNER_TEMP}/devnoise-signing.p12"
+
+          echo "${DEVNOISE_CERTIFICATE_P12_BASE64}" | base64 -D > "${CERT_PATH}"
+
+          security create-keychain -p "${DEVNOISE_KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security set-keychain-settings -lut 21600 "${KEYCHAIN_PATH}"
+          security unlock-keychain -p "${DEVNOISE_KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security import "${CERT_PATH}" \
+            -k "${KEYCHAIN_PATH}" \
+            -P "${DEVNOISE_CERTIFICATE_P12_PASSWORD}" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s \
+            -k "${DEVNOISE_KEYCHAIN_PASSWORD}" \
+            "${KEYCHAIN_PATH}"
+          security list-keychains -d user -s "${KEYCHAIN_PATH}"
+
+          echo "DEVNOISE_NOTARY_KEYCHAIN=${KEYCHAIN_PATH}" >> "${GITHUB_ENV}"
+          echo "DEVNOISE_NOTARY_KEYCHAIN_PROFILE=AC_NOTARY" >> "${GITHUB_ENV}"
+
+      - name: Configure notarytool profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcrun notarytool store-credentials "AC_NOTARY" \
+            --apple-id "${DEVNOISE_NOTARY_APPLE_ID}" \
+            --team-id "${DEVNOISE_NOTARY_TEAM_ID}" \
+            --password "${DEVNOISE_NOTARY_APP_PASSWORD}" \
+            --keychain "${DEVNOISE_NOTARY_KEYCHAIN}"
+
+      - name: Build release app
+        shell: bash
+        run: scripts/build_release.sh
+
+      - name: Codesign app
+        shell: bash
+        run: scripts/codesign.sh
+
+      - name: Build DMG
+        shell: bash
+        run: scripts/dmg_build.sh
+
+      - name: Notarize DMG
+        shell: bash
+        run: scripts/notarize.sh dist/DevNoise.dmg
+
+      - name: Staple artifacts
+        shell: bash
+        run: scripts/staple.sh
+
+      - name: Generate checksum and metadata
+        shell: bash
+        env:
+          DEVNOISE_RELEASE_BASE_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}
+        run: scripts/sha256.sh dist/DevNoise.dmg
+
+      - name: Verify Gatekeeper
+        shell: bash
+        run: scripts/verify_gatekeeper.sh
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: devnoise-release-${{ github.ref_name }}
+          path: |
+            dist/DevNoise.dmg
+            dist/DevNoise.dmg.sha256
+            dist/latest.json
+
+      - name: Publish GitHub release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/DevNoise.dmg
+            dist/DevNoise.dmg.sha256
+            dist/latest.json
