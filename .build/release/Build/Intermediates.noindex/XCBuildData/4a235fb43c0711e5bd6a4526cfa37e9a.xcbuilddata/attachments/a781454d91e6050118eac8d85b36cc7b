@@ -1,0 +1,12 @@
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/AppDelegate.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/AppModel.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Action.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Reducer.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Store.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Persistence/SettingsStore.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Hotkeys/HotkeyModels.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Hotkeys/HotkeyManager.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Permissions/PermissionsManager.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Audio/AudioEngineManager.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/UI/MenuBuilder.swift
+/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/UI/StatusBarController.swift
