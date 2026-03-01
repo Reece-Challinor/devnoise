@@ -11,11 +11,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let settingsStore = SettingsStore()
         let model = settingsStore.load()
+        let hotkeyManager = HotkeyManager()
 
         let environment = Environment(
             audioEngine: AudioEngineManager(),
             settingsStore: settingsStore,
-            hotkeyManager: HotkeyManager(),
+            hotkeyManager: hotkeyManager,
             permissionsManager: PermissionsManager(),
             logger: { message in
                 NSLog("[DevNoise] %@", message)
@@ -26,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         let store = Store(initialModel: model, environment: environment)
+        store.bindHotkeyHandler(to: hotkeyManager)
         self.store = store
         statusBarController = StatusBarController(store: store)
 
