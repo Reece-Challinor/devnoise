@@ -1,0 +1,313 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F00000000000000000000020 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000100 /* AppDelegate.swift */; };
+		F00000000000000000000021 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000101 /* AppModel.swift */; };
+		F00000000000000000000022 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000102 /* Action.swift */; };
+		F00000000000000000000023 /* Reducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000103 /* Reducer.swift */; };
+		F00000000000000000000024 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000104 /* Store.swift */; };
+		F00000000000000000000025 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000105 /* SettingsStore.swift */; };
+		F00000000000000000000026 /* HotkeyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000106 /* HotkeyModels.swift */; };
+		F00000000000000000000027 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000107 /* HotkeyManager.swift */; };
+		F00000000000000000000028 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000108 /* PermissionsManager.swift */; };
+		F00000000000000000000029 /* AudioEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000109 /* AudioEngineManager.swift */; };
+		F0000000000000000000002A /* MenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010A /* MenuBuilder.swift */; };
+		F0000000000000000000002B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010B /* StatusBarController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F0000000000000000000000E /* DevNoise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevNoise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00000000000000000000100 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F00000000000000000000101 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F00000000000000000000102 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		F00000000000000000000103 /* Reducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reducer.swift; sourceTree = "<group>"; };
+		F00000000000000000000104 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		F00000000000000000000105 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		F00000000000000000000106 /* HotkeyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyModels.swift; sourceTree = "<group>"; };
+		F00000000000000000000107 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		F00000000000000000000108 /* PermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManager.swift; sourceTree = "<group>"; };
+		F00000000000000000000109 /* AudioEngineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineManager.swift; sourceTree = "<group>"; };
+		F0000000000000000000010A /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
+		F0000000000000000000010B /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		F0000000000000000000010C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F00000000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F00000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000110 /* DevNoise */,
+				F00000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F00000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0000000000000000000000E /* DevNoise.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000110 /* DevNoise */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000100 /* AppDelegate.swift */,
+				F0000000000000000000010C /* Info.plist */,
+				F00000000000000000000111 /* State */,
+				F00000000000000000000112 /* UI */,
+				F00000000000000000000113 /* Persistence */,
+				F00000000000000000000114 /* Hotkeys */,
+				F00000000000000000000115 /* Permissions */,
+				F00000000000000000000116 /* Audio */,
+			);
+			path = DevNoise;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000111 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000101 /* AppModel.swift */,
+				F00000000000000000000102 /* Action.swift */,
+				F00000000000000000000103 /* Reducer.swift */,
+				F00000000000000000000104 /* Store.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000112 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				F0000000000000000000010A /* MenuBuilder.swift */,
+				F0000000000000000000010B /* StatusBarController.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000113 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000105 /* SettingsStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000114 /* Hotkeys */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000106 /* HotkeyModels.swift */,
+				F00000000000000000000107 /* HotkeyManager.swift */,
+			);
+			path = Hotkeys;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000115 /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000108 /* PermissionsManager.swift */,
+			);
+			path = Permissions;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000116 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F00000000000000000000109 /* AudioEngineManager.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F00000000000000000000004 /* DevNoise */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F00000000000000000000008 /* Build configuration list for PBXNativeTarget "DevNoise" */;
+			buildPhases = (
+				F00000000000000000000007 /* Sources */,
+				F00000000000000000000005 /* Frameworks */,
+				F00000000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DevNoise;
+			productName = DevNoise;
+			productReference = F0000000000000000000000E /* DevNoise.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					F00000000000000000000004 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = F00000000000000000000009 /* Build configuration list for PBXProject "DevNoise" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F00000000000000000000002;
+			productRefGroup = F00000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F00000000000000000000004 /* DevNoise */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F00000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F00000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F00000000000000000000020 /* AppDelegate.swift in Sources */,
+				F00000000000000000000021 /* AppModel.swift in Sources */,
+				F00000000000000000000022 /* Action.swift in Sources */,
+				F00000000000000000000023 /* Reducer.swift in Sources */,
+				F00000000000000000000024 /* Store.swift in Sources */,
+				F00000000000000000000025 /* SettingsStore.swift in Sources */,
+				F00000000000000000000026 /* HotkeyModels.swift in Sources */,
+				F00000000000000000000027 /* HotkeyManager.swift in Sources */,
+				F00000000000000000000028 /* PermissionsManager.swift in Sources */,
+				F00000000000000000000029 /* AudioEngineManager.swift in Sources */,
+				F0000000000000000000002A /* MenuBuilder.swift in Sources */,
+				F0000000000000000000002B /* StatusBarController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F0000000000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DevNoise/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devnoise.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F0000000000000000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DevNoise/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devnoise.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F0000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F0000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F00000000000000000000008 /* Build configuration list for PBXNativeTarget "DevNoise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0000000000000000000000A /* Debug */,
+				F0000000000000000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F00000000000000000000009 /* Build configuration list for PBXProject "DevNoise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0000000000000000000000C /* Debug */,
+				F0000000000000000000000D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F00000000000000000000001 /* Project object */;
+}
