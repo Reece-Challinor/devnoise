@@ -99,9 +99,7 @@ final class Store: ObservableObject {
             dispatch(.togglePlayback)
 
         case .panicStop:
-            if model.playbackState == .playing {
-                dispatch(.togglePlayback)
-            }
+            dispatch(.panicStop)
 
         case .nextNoise:
             dispatch(.setNoiseType(nextNoise(after: model.noiseType)))

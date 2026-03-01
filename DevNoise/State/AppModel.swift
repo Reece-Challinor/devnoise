@@ -18,6 +18,7 @@ enum NoiseType: String, CaseIterable, Codable, Equatable {
     case white
     case pink
     case brown
+    case green
 
     var title: String {
         switch self {
@@ -27,6 +28,8 @@ enum NoiseType: String, CaseIterable, Codable, Equatable {
             return "Pink"
         case .brown:
             return "Brown"
+        case .green:
+            return "Green"
         }
     }
 }

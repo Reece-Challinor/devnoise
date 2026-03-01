@@ -2,10 +2,10 @@
 
 DevNoise is a menu-bar-only macOS app for procedural noise playback with hotkey-first controls.
 
-## Phase 0 status
-- Menu bar shell and deterministic app state store are implemented.
-- Audio, hotkey registration, and permission requests are skeleton implementations.
-- App is silent by default and never auto-plays.
+## Phase 1 status
+- Menu-bar runtime, deterministic state store, and persistence whitelist are implemented.
+- Procedural audio engine, global hotkeys, remap flow, and lifecycle observers are integrated.
+- App remains silent by default and never auto-plays.
 
 ## Build
 ```bash

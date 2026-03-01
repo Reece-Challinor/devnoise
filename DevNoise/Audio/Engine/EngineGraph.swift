@@ -138,6 +138,8 @@ private final class NoiseVoiceRenderer {
                 self = .pink
             case .brown:
                 self = .brown
+            case .green:
+                self = .green
             }
         }
     }
