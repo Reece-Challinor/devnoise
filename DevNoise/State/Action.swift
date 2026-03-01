@@ -3,6 +3,7 @@ import Foundation
 enum Action {
     case appLaunched
     case togglePlayback
+    case syncPlaybackState(PlaybackState)
     case setNoiseType(NoiseType)
     case cycleDepthPreset
     case setDepthPreset(DepthPreset)

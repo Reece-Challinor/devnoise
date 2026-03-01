@@ -19,6 +19,8 @@
 		F00000000000000000000029 /* AudioEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000109 /* AudioEngineManager.swift */; };
 		F0000000000000000000002A /* MenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010A /* MenuBuilder.swift */; };
 		F0000000000000000000002B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010B /* StatusBarController.swift */; };
+		F0000000000000000000002C /* RouteObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010D /* RouteObserver.swift */; };
+		F0000000000000000000002D /* SleepWakeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010E /* SleepWakeObserver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		F0000000000000000000010A /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
 		F0000000000000000000010B /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		F0000000000000000000010C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0000000000000000000010D /* RouteObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteObserver.swift; sourceTree = "<group>"; };
+		F0000000000000000000010E /* SleepWakeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepWakeObserver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,9 +132,19 @@
 		F00000000000000000000116 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				F00000000000000000000117 /* Observers */,
 				F00000000000000000000109 /* AudioEngineManager.swift */,
 			);
 			path = Audio;
+			sourceTree = "<group>";
+		};
+		F00000000000000000000117 /* Observers */ = {
+			isa = PBXGroup;
+			children = (
+				F0000000000000000000010D /* RouteObserver.swift */,
+				F0000000000000000000010E /* SleepWakeObserver.swift */,
+			);
+			path = Observers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,6 +224,8 @@
 				F00000000000000000000027 /* HotkeyManager.swift in Sources */,
 				F00000000000000000000028 /* PermissionsManager.swift in Sources */,
 				F00000000000000000000029 /* AudioEngineManager.swift in Sources */,
+				F0000000000000000000002C /* RouteObserver.swift in Sources */,
+				F0000000000000000000002D /* SleepWakeObserver.swift in Sources */,
 				F0000000000000000000002A /* MenuBuilder.swift in Sources */,
 				F0000000000000000000002B /* StatusBarController.swift in Sources */,
 			);
