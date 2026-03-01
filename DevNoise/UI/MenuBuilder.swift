@@ -35,8 +35,16 @@ final class MenuActionHandler: NSObject {
         dispatchAction(.setVolume(value.doubleValue))
     }
 
-    @objc func remapShortcuts(_: NSMenuItem) {
-        dispatchAction(.remapShortcutsRequested)
+    @objc func beginRemap(_ sender: NSMenuItem) {
+        guard let rawValue = sender.representedObject as? String,
+              let action = HotkeyAction(rawValue: rawValue) else {
+            return
+        }
+        dispatchAction(.beginRemap(action))
+    }
+
+    @objc func cancelRemap(_: NSMenuItem) {
+        dispatchAction(.cancelRemap)
     }
 
     @objc func refreshPermissions(_: NSMenuItem) {
@@ -62,6 +70,14 @@ final class MenuActionHandler: NSObject {
 
 final class MenuBuilder {
     private let volumePresets: [Double] = [0.2, 0.4, 0.6, 0.8, 1.0]
+    private let remapActions: [(action: HotkeyAction, title: String)] = [
+        (.playStop, "Remap Play/Stop..."),
+        (.panicStop, "Remap Panic..."),
+        (.nextNoise, "Remap Next Noise..."),
+        (.cycleDepth, "Remap Cycle Depth..."),
+        (.volumeUp, "Remap Vol Up..."),
+        (.volumeDown, "Remap Vol Down...")
+    ]
 
     func buildMenu(model: AppModel, actionHandler: MenuActionHandler) -> NSMenu {
         let menu = NSMenu()
@@ -191,16 +207,39 @@ final class MenuBuilder {
 
         submenu.addItem(.separator())
 
-        let remapItem = NSMenuItem(
-            title: "Enable Remap Mode (Phase 0)",
-            action: #selector(MenuActionHandler.remapShortcuts(_:)),
-            keyEquivalent: ""
-        )
-        remapItem.target = actionHandler
+        if let remapStatusTitle = remapStatusTitle(for: model.remapState) {
+            let statusItem = NSMenuItem(title: remapStatusTitle, action: nil, keyEquivalent: "")
+            statusItem.isEnabled = false
+            submenu.addItem(statusItem)
+            submenu.addItem(.separator())
+        }
+
+        if !model.permissions.accessibilityGranted {
+            let permissionHint = NSMenuItem(
+                title: "Remap unavailable: Accessibility not granted.",
+                action: nil,
+                keyEquivalent: ""
+            )
+            permissionHint.isEnabled = false
+            submenu.addItem(permissionHint)
+        }
+
+        let remapItem = NSMenuItem(title: "Remap", action: nil, keyEquivalent: "")
+        remapItem.submenu = remapSubmenu(model: model, actionHandler: actionHandler)
         submenu.addItem(remapItem)
 
+        if model.remapState.isListening {
+            let cancelItem = NSMenuItem(
+                title: "Cancel Remap",
+                action: #selector(MenuActionHandler.cancelRemap(_:)),
+                keyEquivalent: ""
+            )
+            cancelItem.target = actionHandler
+            submenu.addItem(cancelItem)
+        }
+
         let openSettingsItem = NSMenuItem(
-            title: "Open Accessibility Settings…",
+            title: "Open System Settings...",
             action: #selector(MenuActionHandler.openAccessibilitySettings(_:)),
             keyEquivalent: ""
         )
@@ -216,5 +255,37 @@ final class MenuBuilder {
         submenu.addItem(refreshItem)
 
         return submenu
+    }
+
+    private func remapSubmenu(model: AppModel, actionHandler: MenuActionHandler) -> NSMenu {
+        let submenu = NSMenu()
+        let canStartRemap = model.permissions.accessibilityGranted && !model.remapState.isListening
+
+        for remapAction in remapActions {
+            let item = NSMenuItem(
+                title: remapAction.title,
+                action: #selector(MenuActionHandler.beginRemap(_:)),
+                keyEquivalent: ""
+            )
+            item.target = actionHandler
+            item.representedObject = remapAction.action.rawValue
+            item.isEnabled = canStartRemap
+            submenu.addItem(item)
+        }
+
+        return submenu
+    }
+
+    private func remapStatusTitle(for remapState: RemapState) -> String? {
+        switch remapState.mode {
+        case .idle:
+            return nil
+        case .listening:
+            return remapState.statusText
+        case .success:
+            return "Remap: \(remapState.statusText)"
+        case .failure:
+            return "Remap Error: \(remapState.statusText)"
+        }
     }
 }

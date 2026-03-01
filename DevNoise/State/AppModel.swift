@@ -58,12 +58,34 @@ struct PermissionsState: Equatable {
     }
 }
 
+enum RemapMode: Equatable {
+    case idle
+    case listening(action: HotkeyAction)
+    case success
+    case failure
+}
+
+struct RemapState: Equatable {
+    var mode: RemapMode
+    var statusText: String
+
+    static let idle = RemapState(mode: .idle, statusText: "Remap idle.")
+
+    var isListening: Bool {
+        if case .listening = mode {
+            return true
+        }
+        return false
+    }
+}
+
 struct AppModel: Equatable {
     var playbackState: PlaybackState
     var noiseType: NoiseType
     var depthPreset: DepthPreset
     var volume: Double
     var permissions: PermissionsState
+    var remapState: RemapState
     var hotkeyBindings: HotkeyBindings
     var tutorialDismissed: Bool
 
@@ -73,6 +95,7 @@ struct AppModel: Equatable {
         depthPreset: .medium,
         volume: 0.6,
         permissions: .default,
+        remapState: .idle,
         hotkeyBindings: .defaults,
         tutorialDismissed: false
     )
