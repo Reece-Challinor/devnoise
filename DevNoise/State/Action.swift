@@ -4,6 +4,7 @@ enum Action {
     case appLaunched
     case togglePlayback
     case panicStop
+    case syncPlaybackState(PlaybackState)
     case setNoiseType(NoiseType)
     case cycleDepthPreset
     case setDepthPreset(DepthPreset)
