@@ -1,0 +1,129 @@
+{
+  "" : {
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/DevNoise-primary.dia",
+    "emit-module-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/DevNoise-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/DevNoise-primary-emit-module.dia",
+    "pch" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/DevNoise-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/DevNoise-primary.swiftdeps"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/AppDelegate.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Audio/AudioEngineManager.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AudioEngineManager~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Hotkeys/HotkeyManager.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyManager~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Hotkeys/HotkeyModels.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/HotkeyModels~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Permissions/PermissionsManager.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/PermissionsManager~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/Persistence/SettingsStore.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/SettingsStore~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Action.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Action~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/AppModel.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/AppModel~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Reducer.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Reducer~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/State/Store.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/Store~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/UI/MenuBuilder.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/MenuBuilder~partial.swiftmodule"
+  },
+  "/Users/reecechallinor/Development/Projects/devnoise-t08/DevNoise/UI/StatusBarController.swift" : {
+    "const-values" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.swiftconstvalues",
+    "dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.d",
+    "diagnostics" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.dia",
+    "index-unit-output-path" : "/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.o",
+    "llvm-bc" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.bc",
+    "object" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.o",
+    "swift-dependencies" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController.swiftdeps",
+    "swiftmodule" : "/Users/reecechallinor/Development/Projects/devnoise-t08/.build/release/Build/Intermediates.noindex/DevNoise.build/Release/DevNoise.build/Objects-normal/x86_64/StatusBarController~partial.swiftmodule"
+  }
+}
