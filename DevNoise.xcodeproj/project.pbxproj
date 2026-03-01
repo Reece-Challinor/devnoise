@@ -19,13 +19,16 @@
 		F00000000000000000000029 /* AudioEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000109 /* AudioEngineManager.swift */; };
 		F0000000000000000000002A /* MenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010A /* MenuBuilder.swift */; };
 		F0000000000000000000002B /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010B /* StatusBarController.swift */; };
-		F00000000000000000000033 /* NoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000120 /* NoiseGenerator.swift */; };
-		F00000000000000000000034 /* WhiteNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000121 /* WhiteNoiseGenerator.swift */; };
-		F00000000000000000000035 /* PinkNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000122 /* PinkNoiseGenerator.swift */; };
-		F00000000000000000000036 /* BrownNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000123 /* BrownNoiseGenerator.swift */; };
-		F00000000000000000000037 /* GreenNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000124 /* GreenNoiseGenerator.swift */; };
-		F00000000000000000000038 /* PRNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000125 /* PRNG.swift */; };
-		F00000000000000000000039 /* DepthShaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000126 /* DepthShaper.swift */; };
+			F00000000000000000000033 /* NoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000120 /* NoiseGenerator.swift */; };
+			F00000000000000000000034 /* WhiteNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000121 /* WhiteNoiseGenerator.swift */; };
+			F00000000000000000000035 /* PinkNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000122 /* PinkNoiseGenerator.swift */; };
+			F00000000000000000000036 /* BrownNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000123 /* BrownNoiseGenerator.swift */; };
+			F00000000000000000000037 /* GreenNoiseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000124 /* GreenNoiseGenerator.swift */; };
+			F00000000000000000000038 /* PRNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000125 /* PRNG.swift */; };
+			F00000000000000000000039 /* DepthShaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000126 /* DepthShaper.swift */; };
+			F0000000000000000000002C /* EngineGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010D /* EngineGraph.swift */; };
+			F0000000000000000000002D /* EnvelopeRamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010E /* EnvelopeRamp.swift */; };
+			F0000000000000000000002E /* TransitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000010F /* TransitionController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,13 +46,16 @@
 		F0000000000000000000010A /* MenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBuilder.swift; sourceTree = "<group>"; };
 		F0000000000000000000010B /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		F0000000000000000000010C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F00000000000000000000120 /* NoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseGenerator.swift; sourceTree = "<group>"; };
-		F00000000000000000000121 /* WhiteNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteNoiseGenerator.swift; sourceTree = "<group>"; };
-		F00000000000000000000122 /* PinkNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinkNoiseGenerator.swift; sourceTree = "<group>"; };
-		F00000000000000000000123 /* BrownNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrownNoiseGenerator.swift; sourceTree = "<group>"; };
-		F00000000000000000000124 /* GreenNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenNoiseGenerator.swift; sourceTree = "<group>"; };
-		F00000000000000000000125 /* PRNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRNG.swift; sourceTree = "<group>"; };
-		F00000000000000000000126 /* DepthShaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShaper.swift; sourceTree = "<group>"; };
+			F00000000000000000000120 /* NoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseGenerator.swift; sourceTree = "<group>"; };
+			F00000000000000000000121 /* WhiteNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteNoiseGenerator.swift; sourceTree = "<group>"; };
+			F00000000000000000000122 /* PinkNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinkNoiseGenerator.swift; sourceTree = "<group>"; };
+			F00000000000000000000123 /* BrownNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrownNoiseGenerator.swift; sourceTree = "<group>"; };
+			F00000000000000000000124 /* GreenNoiseGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenNoiseGenerator.swift; sourceTree = "<group>"; };
+			F00000000000000000000125 /* PRNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRNG.swift; sourceTree = "<group>"; };
+			F00000000000000000000126 /* DepthShaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShaper.swift; sourceTree = "<group>"; };
+			F0000000000000000000010D /* EngineGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineGraph.swift; sourceTree = "<group>"; };
+			F0000000000000000000010E /* EnvelopeRamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvelopeRamp.swift; sourceTree = "<group>"; };
+			F0000000000000000000010F /* TransitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,29 +145,40 @@
 			path = Permissions;
 			sourceTree = "<group>";
 		};
-		F00000000000000000000116 /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-				F00000000000000000000109 /* AudioEngineManager.swift */,
-				F00000000000000000000127 /* DSP */,
-			);
-			path = Audio;
-			sourceTree = "<group>";
-		};
-		F00000000000000000000127 /* DSP */ = {
-			isa = PBXGroup;
-			children = (
-				F00000000000000000000120 /* NoiseGenerator.swift */,
-				F00000000000000000000121 /* WhiteNoiseGenerator.swift */,
+			F00000000000000000000116 /* Audio */ = {
+				isa = PBXGroup;
+				children = (
+					F00000000000000000000109 /* AudioEngineManager.swift */,
+					F00000000000000000000117 /* Engine */,
+					F00000000000000000000127 /* DSP */,
+				);
+				path = Audio;
+				sourceTree = "<group>";
+			};
+			F00000000000000000000117 /* Engine */ = {
+				isa = PBXGroup;
+				children = (
+					F0000000000000000000010D /* EngineGraph.swift */,
+					F0000000000000000000010E /* EnvelopeRamp.swift */,
+					F0000000000000000000010F /* TransitionController.swift */,
+				);
+				path = Engine;
+				sourceTree = "<group>";
+			};
+			F00000000000000000000127 /* DSP */ = {
+				isa = PBXGroup;
+				children = (
+					F00000000000000000000120 /* NoiseGenerator.swift */,
+					F00000000000000000000121 /* WhiteNoiseGenerator.swift */,
 				F00000000000000000000122 /* PinkNoiseGenerator.swift */,
 				F00000000000000000000123 /* BrownNoiseGenerator.swift */,
 				F00000000000000000000124 /* GreenNoiseGenerator.swift */,
 				F00000000000000000000125 /* PRNG.swift */,
-				F00000000000000000000126 /* DepthShaper.swift */,
-			);
-			path = DSP;
-			sourceTree = "<group>";
-		};
+					F00000000000000000000126 /* DepthShaper.swift */,
+				);
+				path = DSP;
+				sourceTree = "<group>";
+			};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -239,16 +256,19 @@
 				F00000000000000000000027 /* HotkeyManager.swift in Sources */,
 				F00000000000000000000028 /* PermissionsManager.swift in Sources */,
 				F00000000000000000000029 /* AudioEngineManager.swift in Sources */,
-				F00000000000000000000033 /* NoiseGenerator.swift in Sources */,
-				F00000000000000000000034 /* WhiteNoiseGenerator.swift in Sources */,
-				F00000000000000000000035 /* PinkNoiseGenerator.swift in Sources */,
-				F00000000000000000000036 /* BrownNoiseGenerator.swift in Sources */,
-				F00000000000000000000037 /* GreenNoiseGenerator.swift in Sources */,
-				F00000000000000000000038 /* PRNG.swift in Sources */,
-				F00000000000000000000039 /* DepthShaper.swift in Sources */,
-				F0000000000000000000002A /* MenuBuilder.swift in Sources */,
-				F0000000000000000000002B /* StatusBarController.swift in Sources */,
-			);
+					F00000000000000000000033 /* NoiseGenerator.swift in Sources */,
+					F00000000000000000000034 /* WhiteNoiseGenerator.swift in Sources */,
+					F00000000000000000000035 /* PinkNoiseGenerator.swift in Sources */,
+					F00000000000000000000036 /* BrownNoiseGenerator.swift in Sources */,
+					F00000000000000000000037 /* GreenNoiseGenerator.swift in Sources */,
+					F00000000000000000000038 /* PRNG.swift in Sources */,
+					F00000000000000000000039 /* DepthShaper.swift in Sources */,
+					F0000000000000000000002C /* EngineGraph.swift in Sources */,
+					F0000000000000000000002D /* EnvelopeRamp.swift in Sources */,
+					F0000000000000000000002E /* TransitionController.swift in Sources */,
+					F0000000000000000000002A /* MenuBuilder.swift in Sources */,
+					F0000000000000000000002B /* StatusBarController.swift in Sources */,
+				);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
