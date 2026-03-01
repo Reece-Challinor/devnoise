@@ -63,6 +63,7 @@ In render callbacks, do not allocate memory, lock mutexes, do file I/O, do netwo
 - Global hotkey execution is intentionally no-op until later phases.
 - Volume menu uses fixed presets for deterministic checkmark state.
 - Default persisted settings are written during app launch so whitelist keys exist with stable defaults.
+- Phase 1 depth migration disambiguates legacy persisted `audio.depthPreset=deep` by treating it as old "deep" (`Super Deep`) and persisting current "Deep" as `phase1.deep`.
 
 ## Risks / PRD Conflicts
 - No explicit conflict between `docs/prd.md` and `docs/tech.prd.md` identified during bootstrap parsing.

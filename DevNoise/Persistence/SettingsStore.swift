@@ -1,6 +1,13 @@
 import Foundation
 
 final class SettingsStore {
+    private enum DepthPersistence {
+        static let legacyLight = "light"
+        static let legacyMedium = "medium"
+        static let legacyDeep = "deep"
+        static let currentDeep = "phase1.deep"
+    }
+
     private enum Key {
         static let hotkeyPlayStop = "hotkeys.playStop"
         static let hotkeyPanicStop = "hotkeys.panicStop"
@@ -46,7 +53,7 @@ final class SettingsStore {
         }
 
         if let depthRaw = userDefaults.string(forKey: Key.audioDepthPreset),
-           let depth = DepthPreset(rawValue: depthRaw) {
+           let depth = decodeDepthPreset(depthRaw) {
             model.depthPreset = depth
         }
 
@@ -77,7 +84,7 @@ final class SettingsStore {
 
     func save(model: AppModel) {
         userDefaults.set(model.noiseType.rawValue, forKey: Key.audioNoiseType)
-        userDefaults.set(model.depthPreset.rawValue, forKey: Key.audioDepthPreset)
+        userDefaults.set(encodeDepthPreset(model.depthPreset), forKey: Key.audioDepthPreset)
         userDefaults.set(model.volume, forKey: Key.audioVolume)
         userDefaults.set(model.tutorialDismissed, forKey: Key.tutorialDismissed)
 
@@ -108,5 +115,30 @@ final class SettingsStore {
             return
         }
         userDefaults.set(data, forKey: key)
+    }
+
+    private func decodeDepthPreset(_ storedValue: String) -> DepthPreset? {
+        switch storedValue {
+        case DepthPersistence.legacyLight:
+            return .normal
+        case DepthPersistence.legacyMedium:
+            return .deep
+        case DepthPersistence.legacyDeep:
+            return .superDeep
+        case DepthPersistence.currentDeep:
+            return .deep
+        default:
+            return DepthPreset(rawValue: storedValue)
+        }
+    }
+
+    private func encodeDepthPreset(_ preset: DepthPreset) -> String {
+        switch preset {
+        case .deep:
+            // Keep legacy "deep" available for one-time migration only.
+            return DepthPersistence.currentDeep
+        default:
+            return preset.rawValue
+        }
     }
 }
