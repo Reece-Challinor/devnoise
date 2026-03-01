@@ -23,3 +23,7 @@ Run the `DevNoise` scheme from Xcode.
 - Technical plan: `docs/tech.prd.md`
 - Privacy guarantees: `docs/privacy.md`
 - Troubleshooting: `docs/troubleshooting.md`
+- Phase 1 manual QA: `docs/phase1-qa.md`
+- Download landing page source: `site/index.html`
+- Site release notes: `site/release-notes.md`
+- Vercel routing/redirect config: `vercel.json`
