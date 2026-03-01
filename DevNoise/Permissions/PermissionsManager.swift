@@ -3,6 +3,10 @@ import ApplicationServices
 import Foundation
 
 final class PermissionsManager {
+    func isTrustedForRemapCapture() -> Bool {
+        isAccessibilityTrusted()
+    }
+
     func isAccessibilityTrusted() -> Bool {
         AXIsProcessTrustedWithOptions(trustOptions(prompt: false))
     }
