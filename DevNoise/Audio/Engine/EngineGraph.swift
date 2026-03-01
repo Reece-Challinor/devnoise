@@ -143,28 +143,28 @@ private final class NoiseVoiceRenderer {
     }
 
     private enum DepthKind: Int32 {
-        case light
-        case medium
+        case normal
         case deep
+        case superDeep
 
         init(_ preset: DepthPreset) {
             switch preset {
-            case .light:
-                self = .light
-            case .medium:
-                self = .medium
+            case .normal:
+                self = .normal
             case .deep:
                 self = .deep
+            case .superDeep:
+                self = .superDeep
             }
         }
 
         var parameters: DepthParameters {
             switch self {
-            case .light:
+            case .normal:
                 return DepthParameters(lowMix: 0.18, lowpassCoeff: 0.09, toneCoeff: 0.18, highDampen: 0.12, makeupGain: 1.0)
-            case .medium:
-                return DepthParameters(lowMix: 0.34, lowpassCoeff: 0.06, toneCoeff: 0.14, highDampen: 0.24, makeupGain: 1.06)
             case .deep:
+                return DepthParameters(lowMix: 0.34, lowpassCoeff: 0.06, toneCoeff: 0.14, highDampen: 0.24, makeupGain: 1.06)
+            case .superDeep:
                 return DepthParameters(lowMix: 0.52, lowpassCoeff: 0.04, toneCoeff: 0.10, highDampen: 0.34, makeupGain: 1.12)
             }
         }
@@ -217,7 +217,7 @@ private final class NoiseVoiceRenderer {
     }
 
     private let noiseKindRaw = AtomicInt32(NoiseKind.pink.rawValue)
-    private let depthKindRaw = AtomicInt32(DepthKind.medium.rawValue)
+    private let depthKindRaw = AtomicInt32(DepthKind.deep.rawValue)
 
     private var leftPRNG: XorShift32
     private var rightPRNG: XorShift32
@@ -240,7 +240,7 @@ private final class NoiseVoiceRenderer {
 
     func render(frameCount: AVAudioFrameCount, audioBufferList: UnsafeMutablePointer<AudioBufferList>) {
         let noise = NoiseKind(rawValue: noiseKindRaw.load()) ?? .pink
-        let depth = DepthKind(rawValue: depthKindRaw.load()) ?? .medium
+        let depth = DepthKind(rawValue: depthKindRaw.load()) ?? .deep
 
         let frameCountInt = Int(frameCount)
         let buffers = UnsafeMutableAudioBufferListPointer(audioBufferList)
