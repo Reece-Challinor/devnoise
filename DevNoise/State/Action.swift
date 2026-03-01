@@ -3,6 +3,7 @@ import Foundation
 enum Action {
     case appLaunched
     case togglePlayback
+    case panicStop
     case setNoiseType(NoiseType)
     case cycleDepthPreset
     case setDepthPreset(DepthPreset)
@@ -22,6 +23,7 @@ enum Effect {
     case resetPersistedSettings
     case audioStart
     case audioStop
+    case audioPanicStop
     case audioSetNoise(NoiseType)
     case audioSetDepth(DepthPreset)
     case audioSetVolume(Double)

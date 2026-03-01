@@ -40,6 +40,9 @@ final class Store: ObservableObject {
         case .audioStop:
             environment.audioEngine.stop()
 
+        case .audioPanicStop:
+            environment.audioEngine.panicStop()
+
         case .audioSetNoise(let noiseType):
             environment.audioEngine.setNoiseType(noiseType)
 

@@ -20,6 +20,10 @@ func reduce(model: inout AppModel, action: Action) -> [Effect] {
         model.playbackState = .playing
         return [.audioStart]
 
+    case .panicStop:
+        model.playbackState = .stopped
+        return [.audioPanicStop]
+
     case .setNoiseType(let type):
         guard model.noiseType != type else {
             return []
