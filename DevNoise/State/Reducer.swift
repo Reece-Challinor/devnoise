@@ -64,14 +64,105 @@ func reduce(model: inout AppModel, action: Action) -> [Effect] {
         model.hotkeyBindings = nextBindings
         return [.persistSettings, .unregisterHotkeys, .registerHotkeys(nextBindings)]
 
-    case .remapShortcutsRequested:
-        return [.refreshPermissions(prompt: true)]
+    case .beginRemap(let action):
+        guard model.permissions.accessibilityGranted else {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Accessibility permission is required before remapping."
+            )
+            return [.refreshPermissions(prompt: true)]
+        }
+
+        model.remapState = RemapState(
+            mode: .listening(action: action),
+            statusText: "Listening for \(action.title)... Press a new shortcut (Esc cancels)."
+        )
+        return []
+
+    case .cancelRemap:
+        guard model.remapState.isListening else {
+            return []
+        }
+        model.remapState = RemapState(mode: .failure, statusText: "Remap canceled.")
+        return []
+
+    case .remapResult(let action, let chord):
+        guard case .listening(let listeningAction) = model.remapState.mode,
+              listeningAction == action else {
+            return []
+        }
+
+        guard model.permissions.accessibilityGranted else {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Accessibility permission is not granted."
+            )
+            return []
+        }
+
+        guard chord.isValid else {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Invalid shortcut. Include Command or Control and avoid single-key, Option-only, and Shift-only shortcuts."
+            )
+            return []
+        }
+
+        if let collisionAction = collidingHotkeyAction(
+            for: action,
+            chord: chord,
+            in: model.hotkeyBindings
+        ) {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Shortcut conflicts with \(collisionAction.title)."
+            )
+            return []
+        }
+
+        guard model.hotkeyBindings.chord(for: action) != chord else {
+            model.remapState = RemapState(
+                mode: .success,
+                statusText: "\(action.title) remains \(chord.displayString)."
+            )
+            return []
+        }
+
+        var nextBindings = model.hotkeyBindings
+        nextBindings.set(chord: chord, for: action)
+        guard nextBindings.validationErrors().isEmpty else {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Shortcut could not be applied."
+            )
+            return []
+        }
+
+        model.hotkeyBindings = nextBindings
+        model.remapState = RemapState(
+            mode: .success,
+            statusText: "\(action.title) set to \(chord.displayString)."
+        )
+        return [.persistSettings, .unregisterHotkeys, .registerHotkeys(nextBindings)]
+
+    case .remapTimeout:
+        guard model.remapState.isListening else {
+            return []
+        }
+        model.remapState = RemapState(mode: .failure, statusText: "Remap timed out after 5 seconds.")
+        return []
 
     case .refreshPermissions(let promptIfNeeded):
         return [.refreshPermissions(prompt: promptIfNeeded)]
 
     case .accessibilityTrustUpdated(let isTrusted):
         model.permissions.accessibilityGranted = isTrusted
+        if !isTrusted, model.remapState.isListening {
+            model.remapState = RemapState(
+                mode: .failure,
+                statusText: "Remap stopped because accessibility permission is not granted."
+            )
+        }
         return []
 
     case .openAccessibilitySettings:
@@ -97,4 +188,17 @@ func reduce(model: inout AppModel, action: Action) -> [Effect] {
     case .quit:
         return [.quitApp]
     }
+}
+
+private func collidingHotkeyAction(
+    for actionToReplace: HotkeyAction,
+    chord: HotkeyChord,
+    in bindings: HotkeyBindings
+) -> HotkeyAction? {
+    for action in HotkeyAction.allCases where action != actionToReplace {
+        if bindings.chord(for: action) == chord {
+            return action
+        }
+    }
+    return nil
 }

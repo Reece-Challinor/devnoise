@@ -9,7 +9,10 @@ enum Action {
     case setDepthPreset(DepthPreset)
     case setVolume(Double)
     case setHotkey(action: HotkeyAction, chord: HotkeyChord)
-    case remapShortcutsRequested
+    case beginRemap(HotkeyAction)
+    case cancelRemap
+    case remapResult(action: HotkeyAction, chord: HotkeyChord)
+    case remapTimeout
     case refreshPermissions(promptIfNeeded: Bool)
     case accessibilityTrustUpdated(Bool)
     case openAccessibilitySettings
