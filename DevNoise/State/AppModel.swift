@@ -32,18 +32,22 @@ enum NoiseType: String, CaseIterable, Codable, Equatable {
 }
 
 enum DepthPreset: String, CaseIterable, Codable, Equatable {
-    case light
-    case medium
+    case normal
     case deep
+    case superDeep
+
+    // Phase 0 compatibility aliases for code paths not yet migrated.
+    static var light: DepthPreset { .normal }
+    static var medium: DepthPreset { .deep }
 
     var title: String {
         switch self {
-        case .light:
-            return "Light"
-        case .medium:
-            return "Medium"
+        case .normal:
+            return "Normal"
         case .deep:
             return "Deep"
+        case .superDeep:
+            return "Super Deep"
         }
     }
 }
@@ -70,7 +74,7 @@ struct AppModel: Equatable {
     static let defaults = AppModel(
         playbackState: .stopped,
         noiseType: .pink,
-        depthPreset: .medium,
+        depthPreset: .deep,
         volume: 0.6,
         permissions: .default,
         hotkeyBindings: .defaults,
