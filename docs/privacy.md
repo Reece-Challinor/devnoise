@@ -1,30 +1,27 @@
 # Privacy
 
-DevNoise is built to be trustable by default. The app runtime is local-only and intentionally
-minimal.
+DevNoise runs locally and produces audio output only.
 
-## Runtime Data and Network Behavior
+## Data and network
 
-- No network calls from inside the app runtime.
-- No analytics, telemetry, or usage tracking.
-- No crash reporting pipelines.
-- No background upload services, daemons, or update checkers.
+- No network calls, analytics, telemetry, tracking, crash uploads, or update checks.
+- No accounts, cloud sync, daemons, launch agents, or background services.
+- No microphone or audio input. Generated sound is never recorded or saved.
 
-## Input and Audio Capture Guarantees
+## Keyboard input and permissions
 
-- No microphone or audio input access.
-- No keystroke logging.
-- No storage of raw typed content or key streams.
-- During shortcut remap, only the final accepted key chord is persisted.
+- DevNoise registers six fixed Carbon hotkeys and receives only those shortcut actions.
+- It does not monitor general keyboard input, capture shortcuts, or support remapping.
+- It never reads, logs, stores, or transmits typed content.
+- It requests no Accessibility, Input Monitoring, microphone, or other system permission.
 
-## Permissions Policy
+## Local settings
 
-- Permissions are requested only after explicit user action.
-- Accessibility (and, if implementation requires it, Input Monitoring) is used only for
-  global controls and remap flows.
-- Permission prompts are never shown automatically on launch.
+The runtime saves only these non-sensitive `UserDefaults` values:
 
-## Local Persistence Scope
+- `audio.noiseType`
+- `audio.depthPreset`
+- `audio.volume`
 
-- Playback state is never persisted.
-- Persistence is restricted to the explicit UserDefaults whitelist documented in `AGENTS.md`.
+Playback state, errors, shortcut activity, and usage history are never persisted. Reset removes
+DevNoise's approved preference keys and leaves unrelated defaults untouched.

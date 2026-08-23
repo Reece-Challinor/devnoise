@@ -1,39 +1,21 @@
-# Phase 1 QA Matrix
+# Minimal App QA
 
-This checklist is for manual Phase 1 verification of runtime behavior, hotkeys/remap, routing,
-and release artifacts.
+Use this checklist on both a Debug build and the final signed Release build.
 
-## Test Environment
+| ID | Check | Expected result |
+| --- | --- | --- |
+| QA-01 | Launch DevNoise | `DN` appears in the menu bar; no window, Dock icon, audio, or permission prompt appears |
+| QA-02 | Open the `DN` menu | Play, four noise choices, three depth choices, volume controls, shortcuts, and Quit are available |
+| QA-03 | Choose Play, then Stop | Audio starts on demand and both transitions are clean; launch itself did not initialize audible playback |
+| QA-04 | Select White, Pink, Brown, and Green while playing | Every procedural noise plays and switching does not click, stall, or crash |
+| QA-05 | Select Normal, Deep, and Super Deep while playing | Each preset changes the tone cleanly |
+| QA-06 | Change volume through its full range | Output changes predictably, remains bounded, and mute produces silence |
+| QA-07 | Use Control-Command-N and Control-Command-Escape from another app | Play/Stop toggles globally; Panic Stop silences immediately |
+| QA-08 | Use Control-Command-], Control-Command-[, Control-Command-=, and Control-Command-- | Noise, depth, volume up, and volume down work globally |
+| QA-09 | Relaunch after changing noise, depth, and volume while playing | Those three audio preferences return, but playback starts stopped and silent |
+| QA-10 | Sleep/wake and change audio output while playing | App remains responsive; stopping and restarting playback restores output if needed |
+| QA-11 | Inspect normal use | No remapping UI, permission request, network traffic, microphone use, or stored playback state exists |
+| QA-12 | Launch the signed/notarized artifact | Gatekeeper accepts it and `DN` appears with the same silent behavior |
 
-- macOS version under test
-- Build type (Debug or Release)
-- Audio output route (built-in, wired, Bluetooth)
-- Permission state before run (none, Accessibility granted, Input Monitoring granted)
-
-## Manual Matrix
-
-| ID | Area | Preconditions | Steps | Expected Result |
-| --- | --- | --- | --- | --- |
-| QA-001 | Launch silence | Fresh launch | Launch app and do nothing for 10s | No audio output on launch; app starts in stopped state |
-| QA-002 | Play fade-in | App stopped | Trigger Play from menu | Audio starts with smooth fade-in (~120 ms) and no click/pop |
-| QA-003 | Stop fade-out | App playing | Trigger Stop from menu | Audio stops with smooth fade-out (~120 ms) and no click/pop |
-| QA-004 | Noise crossfade | App playing | Switch noise type repeatedly (White/Pink/Brown/Green) | Noise transition crossfades (~150 ms) without discontinuity |
-| QA-005 | Depth ramp | App playing | Cycle depth preset Normal -> Deep -> Super Deep | Spectral depth changes ramp cleanly (50-150 ms), no abrupt jumps |
-| QA-006 | Global Play/Stop hotkey | Hotkey bound and permissions granted as required | Trigger Play/Stop via global hotkey from another app | Playback toggles correctly while DevNoise menu remains hidden/inactive |
-| QA-007 | Panic Stop hotkey | App playing, panic hotkey bound | Trigger Panic Stop from another app | Playback stops immediately and state reflects stopped |
-| QA-008 | Remap success path | Shortcuts menu open | Start remap for one action and press valid chord within timeout | New chord is accepted and shown immediately in menu |
-| QA-009 | Remap timeout/cancel path | Shortcuts menu open in listening mode | Wait >5s without chord, then retry and press Escape | Timeout leaves previous binding unchanged; Escape cancels safely |
-| QA-010 | Remap collision handling | Two actions have existing chords | Attempt to bind second action to already-used chord | Collision is rejected or surfaced; prior stable bindings remain intact |
-| QA-011 | Sleep/wake behavior | App playing | Put Mac to sleep, wake, observe playback state | No crashes/hangs; playback state recovers according to intended policy |
-| QA-012 | Output route change | App playing | Change output route (e.g., speakers -> headphones -> Bluetooth) | Audio pipeline remains stable and click-free after route transition |
-| QA-013 | Release artifact redirect | Release published with `DevNoise.dmg` | Open site `/download` endpoint | Permanent redirect resolves to latest GitHub release DMG asset |
-| QA-014 | Gatekeeper verification | Release DMG downloaded | Open DMG, launch app, and run `scripts/verify_gatekeeper.sh` | Signed/notarized app launches without trust-blocking failures |
-
-## Sign-off Template
-
-- Tested by:
-- Date:
-- Environment:
-- Cases passed:
-- Cases failed:
-- Follow-up issues:
+Record the macOS version, hardware, output device, build identifier, failures, and tester for
+each release candidate.

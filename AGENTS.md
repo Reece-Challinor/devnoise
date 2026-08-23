@@ -14,7 +14,7 @@ These instructions govern all changes in this repository.
 - Permissions are only requested on explicit user action.
 - Never log/store/transmit typed content.
 - Never persist playback state.
-- No third-party dependencies in Phase 0.
+- No third-party dependencies.
 - No update checkers, daemons, launch agents, or background services.
 
 ## Persistence Whitelist
@@ -32,42 +32,19 @@ Only these UserDefaults keys are allowed:
 
 ## Input/Keystroke Rules
 - Never capture or persist raw typed content.
-- During remap flows, only persist final chord bindings.
+- Keep the six fixed Carbon hotkeys; do not add keyboard monitoring or remapping.
 - Any debugging output must never include user keystroke streams.
 
 ## Real-time Audio Rule (Phase 1 guardrail)
 In render callbacks, do not allocate memory, lock mutexes, do file I/O, do network I/O, call Objective-C APIs, or perform blocking work.
 
-## Bootstrapping Notes
-### Plan
-- [x] Create repository skeleton, docs, scripts, and policy file.
-- [x] Create `DevNoise.xcodeproj` macOS app target with `LSUIElement=1`.
-- [x] Implement Phase 0 architecture: menu bar shell, store/reducer, persistence, hotkey/permission/audio skeletons.
-- [x] Add CI build workflow and release-script placeholders.
-- [x] Build and verify app behavior; update assumptions and risks.
-
-### Phase 0 Checklist
-- [x] Step 1: Initialize repository skeleton
-- [x] Step 2: Create Xcode project
-- [x] Step 3: Implement menu-bar shell
-- [x] Step 4: Implement core state machine
-- [x] Step 5: Implement persistence whitelist
-- [x] Step 6: Implement hotkeys skeleton
-- [x] Step 7: Implement permissions skeleton
-- [x] Step 8: Implement audio skeleton
-- [x] Step 9: Add scripts and CI scaffolding
-- [x] Step 10: Finalize strict AGENTS rules and operations
-
-## Assumptions Made In Phase 0
-- Help action is a non-network local action in Phase 0.
-- Global hotkey execution is intentionally no-op until later phases.
-- Volume menu uses fixed presets for deterministic checkmark state.
-- Default persisted settings are written during app launch so whitelist keys exist with stable defaults.
-- Phase 1 depth migration disambiguates legacy persisted `audio.depthPreset=deep` by treating it as old "deep" (`Super Deep`) and persisting current "Deep" as `phase1.deep`.
-
-## Risks / PRD Conflicts
-- No explicit conflict between `docs/prd.md` and `docs/tech.prd.md` identified during bootstrap parsing.
-- If future conflicts emerge, product constraints in `docs/prd.md` take precedence over implementation details in `docs/tech.prd.md`.
+## Current Runtime
+- Six production Swift files: lifecycle coordinator, model, status menu, settings, hotkeys, and audio.
+- The `DN` status item is installed before settings, hotkeys, or audio work.
+- Audio is lazy and begins only after an explicit Play command.
+- The six global hotkeys are fixed, exclusive Carbon registrations and require no permissions.
+- Only noise type, depth, and volume are actively persisted; playback always starts stopped.
+- Product constraints in `docs/prd.md` take precedence over implementation details in `docs/tech.prd.md`.
 
 ## Operational Commands
 ### Open project
@@ -80,18 +57,23 @@ open DevNoise.xcodeproj
 xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug build
 ```
 
+### Test
+```bash
+xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug -destination 'platform=macOS' test
+```
+
 ### Build (release)
 ```bash
 xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Release build
 ```
 
-### Run release pipeline scripts (placeholders)
+### Run release pipeline scripts
 ```bash
 scripts/build_release.sh
 scripts/codesign.sh
-scripts/notarize.sh
-scripts/staple.sh
 scripts/dmg_build.sh
+scripts/notarize.sh dist/DevNoise.dmg
+scripts/staple.sh
 scripts/sha256.sh
 scripts/verify_gatekeeper.sh
 ```

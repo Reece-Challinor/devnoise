@@ -1,14 +1,14 @@
 # DevNoise Release Notes
 
-## v0.3.0 (Phase 1)
-Date: 2026-03-01
+## v0.1.0
+Status: release candidate
 
-- Menu-bar-only runtime with no Dock icon and no runtime windows.
-- Silent-on-launch behavior remains enforced (no auto-play).
-- Procedural noise architecture only (no bundled loop assets).
-- Privacy guardrails remain explicit: no in-app networking, no analytics/telemetry, no
-  microphone/audio input, no typed-content storage.
-- Phase 1 manual QA matrix is documented in `docs/phase1-qa.md`.
+- Reliable text `DN` menu-bar item with no Dock icon or runtime windows.
+- Silent launch and lazy procedural audio for White, Pink, Brown, and Green noise.
+- Three depth presets, volume controls, and six fixed permission-free global shortcuts.
+- No in-app networking, telemetry, microphone input, typed-content handling, or playback
+  persistence.
+- Focused automated tests plus a manual release QA matrix in `docs/phase1-qa.md`.
 
 ## Download Contract
 

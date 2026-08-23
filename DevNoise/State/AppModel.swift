@@ -1,47 +1,24 @@
 import Foundation
 
-enum PlaybackState: String, Codable, Equatable {
-    case stopped
-    case playing
-
-    var playStopTitle: String {
-        switch self {
-        case .stopped:
-            return "Play"
-        case .playing:
-            return "Stop"
-        }
-    }
-}
-
-enum NoiseType: String, CaseIterable, Codable, Equatable {
+enum NoiseType: String, CaseIterable, Codable {
     case white
     case pink
     case brown
     case green
 
     var title: String {
-        switch self {
-        case .white:
-            return "White"
-        case .pink:
-            return "Pink"
-        case .brown:
-            return "Brown"
-        case .green:
-            return "Green"
-        }
+        rawValue.capitalized
+    }
+
+    var audioCode: Int32 {
+        Int32(Self.allCases.firstIndex(of: self) ?? 0)
     }
 }
 
-enum DepthPreset: String, CaseIterable, Codable, Equatable {
+enum DepthPreset: String, CaseIterable, Codable {
     case normal
     case deep
     case superDeep
-
-    // Phase 0 compatibility aliases for code paths not yet migrated.
-    static var light: DepthPreset { .normal }
-    static var medium: DepthPreset { .deep }
 
     var title: String {
         switch self {
@@ -53,64 +30,52 @@ enum DepthPreset: String, CaseIterable, Codable, Equatable {
             return "Super Deep"
         }
     }
-}
 
-struct PermissionsState: Equatable {
-    var accessibilityGranted: Bool
-
-    static let `default` = PermissionsState(accessibilityGranted: false)
-
-    var menuLine: String {
-        "Permissions: \(accessibilityGranted ? "Granted" : "Not Granted")"
-    }
-}
-
-enum RemapMode: Equatable {
-    case idle
-    case listening(action: HotkeyAction)
-    case success
-    case failure
-}
-
-struct RemapState: Equatable {
-    var mode: RemapMode
-    var statusText: String
-
-    static let idle = RemapState(mode: .idle, statusText: "Remap idle.")
-
-    var isListening: Bool {
-        if case .listening = mode {
-            return true
-        }
-        return false
+    var audioCode: Int32 {
+        Int32(Self.allCases.firstIndex(of: self) ?? 0)
     }
 }
 
 struct AppModel: Equatable {
-    var playbackState: PlaybackState
+    var isPlaying: Bool
     var noiseType: NoiseType
     var depthPreset: DepthPreset
     var volume: Double
-    var permissions: PermissionsState
-    var remapState: RemapState
-    var hotkeyBindings: HotkeyBindings
-    var tutorialDismissed: Bool
+    var audioError: String?
+    var unavailableHotkeyCount: Int
 
     static let defaults = AppModel(
-        playbackState: .stopped,
+        isPlaying: false,
         noiseType: .pink,
         depthPreset: .deep,
         volume: 0.6,
-        permissions: .default,
-        remapState: .idle,
-        hotkeyBindings: .defaults,
-        tutorialDismissed: false
+        audioError: nil,
+        unavailableHotkeyCount: 0
     )
 
     var statusLine: String {
-        if playbackState == .playing {
-            return "Status: Playing \(noiseType.title) / \(depthPreset.title) / \(Int(volume * 100))%"
+        guard isPlaying else {
+            return "Stopped"
         }
-        return "Status: Stopped"
+        return "Playing \(noiseType.title) · \(depthPreset.title) · \(Int(volume * 100))%"
+    }
+
+    mutating func cycleNoise() {
+        noiseType = Self.next(after: noiseType, in: NoiseType.allCases)
+    }
+
+    mutating func cycleDepth() {
+        depthPreset = Self.next(after: depthPreset, in: DepthPreset.allCases)
+    }
+
+    func adjustedVolume(by delta: Double) -> Double {
+        min(max(volume + delta, 0), 1)
+    }
+
+    private static func next<Value: Equatable>(after current: Value, in values: [Value]) -> Value {
+        guard let index = values.firstIndex(of: current), !values.isEmpty else {
+            return current
+        }
+        return values[(index + 1) % values.count]
     }
 }

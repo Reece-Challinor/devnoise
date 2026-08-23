@@ -13,5 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build DevNoise
-        run: xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug build
+      - name: Test Debug
+        run: xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test
+
+      - name: Build Release
+        run: xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Release CODE_SIGNING_ALLOWED=NO build

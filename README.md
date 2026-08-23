@@ -1,59 +1,49 @@
 # DevNoise
 
-DevNoise is a menu-bar-only macOS app for procedural noise playback with hotkey-first controls.
+DevNoise is a tiny, keyboard-centric macOS menu-bar app for procedural background noise.
+It launches silently, displays `DN` in the menu bar, and has no Dock icon or app window.
 
-## Phase 1 status
-- Menu-bar runtime, deterministic state store, and persistence whitelist are implemented.
-- Procedural audio engine, global hotkeys, remap flow, and lifecycle observers are integrated.
-- App remains silent by default and never auto-plays.
+## What it does
 
-## Build
+- Generates White, Pink, Brown, and Green noise locally.
+- Provides Normal, Deep, and Super Deep tone presets.
+- Starts the audio engine only when Play is requested.
+- Saves noise type, depth, and volume. Playback always starts stopped.
+- Registers six fixed global shortcuts with Carbon; no permissions or remapping are needed.
+
+| Action | Shortcut |
+| --- | --- |
+| Play / Stop | Control-Command-N |
+| Panic Stop | Control-Command-Escape |
+| Next Noise | Control-Command-] |
+| Cycle Depth | Control-Command-[ |
+| Volume Up | Control-Command-= |
+| Volume Down | Control-Command-- |
+
+## Build and run
+
+Requires macOS 13 or later and Xcode.
+
 ```bash
 xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug build
-```
-
-## Run
-```bash
 open DevNoise.xcodeproj
 ```
-Run the `DevNoise` scheme from Xcode.
 
-## Release pipeline
-Required environment variables:
+Run the `DevNoise` scheme from Xcode, then use `DN` in the menu bar. DevNoise intentionally
+does not appear in the Dock.
+
+## Verify
+
 ```bash
-export DEVNOISE_SIGN_IDENTITY="Developer ID Application: Example, Inc. (TEAMID)"
-
-# Option A (recommended): notarytool keychain profile
-export DEVNOISE_NOTARY_KEYCHAIN_PROFILE="AC_NOTARY"
-
-# Option B: Apple ID credentials for notarytool
-export DEVNOISE_NOTARY_APPLE_ID="developer@example.com"
-export DEVNOISE_NOTARY_TEAM_ID="TEAMID"
-export DEVNOISE_NOTARY_APP_PASSWORD="app-specific-password"
-
-# Optional: used when generating dist/latest.json
-export DEVNOISE_RELEASE_BASE_URL="https://downloads.example.com/devnoise"
+xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Debug -destination 'platform=macOS' test
+xcodebuild -project DevNoise.xcodeproj -scheme DevNoise -configuration Release build
 ```
 
-Execution order:
-```bash
-scripts/build_release.sh
-scripts/codesign.sh
-scripts/dmg_build.sh
-scripts/notarize.sh
-scripts/staple.sh
-scripts/sha256.sh
-scripts/verify_gatekeeper.sh
-```
+Manual launch checks are in `docs/phase1-qa.md`; common fixes are in
+`docs/troubleshooting.md`.
 
-Artifacts are written to `dist/`, including a versioned `.app`, versioned `.dmg`, checksum sidecar, and `latest.json`.
+## Release
 
-## Docs
-- Product requirements: `docs/prd.md`
-- Technical plan: `docs/tech.prd.md`
-- Privacy guarantees: `docs/privacy.md`
-- Troubleshooting: `docs/troubleshooting.md`
-- Phase 1 manual QA: `docs/phase1-qa.md`
-- Download landing page source: `site/index.html`
-- Site release notes: `site/release-notes.md`
-- Vercel routing/redirect config: `vercel.json`
+A `v*` tag runs tests, builds and signs the app, builds and notarizes the DMG, staples the
+notarization tickets, verifies Gatekeeper, and publishes the release artifacts. Run the manual
+QA checklist before creating the tag.

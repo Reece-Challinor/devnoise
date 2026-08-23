@@ -1,230 +1,199 @@
 import AppKit
-import Combine
 import Foundation
 
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var store: Store?
-    private var statusBarController: StatusBarController?
-    private var audioEngineManager: AudioEngineManager?
-    private var routeObserver: RouteObserver?
-    private var sleepWakeObserver: SleepWakeObserver?
-    private var remapStateObserver: AnyCancellable?
+    private var model = AppModel.defaults
+    private let settingsStore = SettingsStore()
 
-    private var activeRemapAction: HotkeyAction?
-    private var localRemapMonitor: Any?
-    private var globalRemapMonitor: Any?
-    private var remapTimeoutTimer: Timer?
+    private var statusBarController: StatusBarController?
+    private var hotkeyManager: HotkeyManager?
+    private var audioEngine: AudioEngineManager?
 
     func applicationDidFinishLaunching(_: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
-        let settingsStore = SettingsStore()
-        let model = settingsStore.load()
-        let audioEngineManager = AudioEngineManager()
-        self.audioEngineManager = audioEngineManager
+        // Install visible UI first. Audio is not constructed until an explicit Play.
+        let statusBarController = StatusBarController(model: model)
+        self.statusBarController = statusBarController
+        statusBarController.commandHandler = { [weak self] command in
+            self?.handle(command)
+        }
+
+        model = settingsStore.load()
+
         let hotkeyManager = HotkeyManager()
-
-        let environment = Environment(
-            audioEngine: audioEngineManager,
-            settingsStore: settingsStore,
-            hotkeyManager: hotkeyManager,
-            permissionsManager: PermissionsManager(),
-            logger: { message in
-                NSLog("[DevNoise] %@", message)
-            },
-            terminateApp: {
-                NSApp.terminate(nil)
+        self.hotkeyManager = hotkeyManager
+        hotkeyManager.actionHandler = { [weak self] action in
+            guard let self else {
+                return
             }
-        )
+            if Thread.isMainThread {
+                self.handle(action)
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.handle(action)
+                }
+            }
+        }
 
-        let store = Store(initialModel: model, environment: environment)
-        store.bindHotkeyHandler(to: hotkeyManager)
-        self.store = store
-        statusBarController = StatusBarController(store: store)
-        bindRemapCapture(store: store)
-        configureLifecycleObservers(audioEngineManager: audioEngineManager)
-
-        store.dispatch(.appLaunched)
+        model.unavailableHotkeyCount = hotkeyManager.registerAll().count
+        refreshMenu()
     }
 
     func applicationWillTerminate(_: Notification) {
-        stopRemapCapture()
-        routeObserver?.stopObserving()
-        sleepWakeObserver?.stopObserving()
+        hotkeyManager?.unregisterAll()
+        audioEngine?.panicStop()
     }
 
-    private func bindRemapCapture(store: Store) {
-        remapStateObserver = store.$model
-            .map(\.remapState)
-            .removeDuplicates()
-            .receive(on: RunLoop.main)
-            .sink { [weak self, weak store] remapState in
-                guard let self else {
-                    return
-                }
-
-                switch remapState.mode {
-                case .listening(let action):
-                    self.startRemapCapture(for: action, store: store)
-                case .idle, .success, .failure:
-                    self.stopRemapCapture()
-                }
-            }
-    }
-
-    private func startRemapCapture(for action: HotkeyAction, store: Store?) {
-        guard activeRemapAction != action else {
-            return
-        }
-
-        stopRemapCapture()
-        activeRemapAction = action
-
-        localRemapMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self, weak store] event in
-            guard let self, self.activeRemapAction != nil else {
-                return event
-            }
-            self.handleCapturedRemapEvent(event, store: store)
-            return nil
-        }
-
-        globalRemapMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self, weak store] event in
-            self?.handleCapturedRemapEvent(event, store: store)
-        }
-
-        remapTimeoutTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak store] _ in
-            store?.dispatch(.remapTimeout)
+    private func handle(_ command: AppCommand) {
+        switch command {
+        case .togglePlayback:
+            togglePlayback()
+        case .panicStop:
+            stopImmediately()
+        case .setNoise(let noiseType):
+            setNoise(noiseType)
+        case .setDepth(let depthPreset):
+            setDepth(depthPreset)
+        case .setVolume(let volume):
+            setVolume(volume)
+        case .increaseVolume:
+            setVolume(model.adjustedVolume(by: 0.05))
+        case .decreaseVolume:
+            setVolume(model.adjustedVolume(by: -0.05))
+        case .reset:
+            reset()
+        case .quit:
+            NSApp.terminate(nil)
         }
     }
 
-    private func stopRemapCapture() {
-        if let localRemapMonitor {
-            NSEvent.removeMonitor(localRemapMonitor)
-            self.localRemapMonitor = nil
+    private func handle(_ action: HotkeyAction) {
+        switch action {
+        case .playStop:
+            togglePlayback()
+        case .panicStop:
+            stopImmediately()
+        case .nextNoise:
+            model.cycleNoise()
+            applyNoiseSelection()
+        case .cycleDepth:
+            model.cycleDepth()
+            applyDepthSelection()
+        case .volumeUp:
+            setVolume(model.adjustedVolume(by: 0.05))
+        case .volumeDown:
+            setVolume(model.adjustedVolume(by: -0.05))
         }
-
-        if let globalRemapMonitor {
-            NSEvent.removeMonitor(globalRemapMonitor)
-            self.globalRemapMonitor = nil
-        }
-
-        remapTimeoutTimer?.invalidate()
-        remapTimeoutTimer = nil
-        activeRemapAction = nil
     }
 
-    private func handleCapturedRemapEvent(_ event: NSEvent, store: Store?) {
-        guard let action = activeRemapAction else {
+    private func togglePlayback() {
+        if model.isPlaying {
+            audioEngine?.stop()
+            model.isPlaying = false
+            model.audioError = nil
+            refreshMenu()
             return
         }
 
-        if event.isARepeat {
+        let engine = makeAudioEngineIfNeeded()
+        do {
+            try engine.start()
+            model.isPlaying = true
+            model.audioError = nil
+        } catch {
+            model.isPlaying = false
+            model.audioError = "Audio unavailable — check your output device"
+        }
+        refreshMenu()
+    }
+
+    private func stopImmediately() {
+        audioEngine?.panicStop()
+        model.isPlaying = false
+        model.audioError = nil
+        refreshMenu()
+    }
+
+    private func setNoise(_ noiseType: NoiseType) {
+        guard model.noiseType != noiseType else {
             return
         }
+        model.noiseType = noiseType
+        applyNoiseSelection()
+    }
 
-        if isEscape(event) {
-            store?.dispatch(.cancelRemap)
+    private func applyNoiseSelection() {
+        audioEngine?.setNoiseType(model.noiseType)
+        saveAndRefresh()
+    }
+
+    private func setDepth(_ depthPreset: DepthPreset) {
+        guard model.depthPreset != depthPreset else {
             return
         }
+        model.depthPreset = depthPreset
+        applyDepthSelection()
+    }
 
-        let chord = HotkeyChord(
-            modifiers: mapModifiers(from: event.modifierFlags),
-            key: mapKey(from: event)
+    private func applyDepthSelection() {
+        audioEngine?.setDepthPreset(model.depthPreset)
+        saveAndRefresh()
+    }
+
+    private func setVolume(_ volume: Double) {
+        let clamped = min(max(volume, 0), 1)
+        guard model.volume != clamped else {
+            return
+        }
+        model.volume = clamped
+        audioEngine?.setVolume(clamped)
+        saveAndRefresh()
+    }
+
+    private func reset() {
+        audioEngine?.stop()
+        settingsStore.reset()
+
+        let unavailableHotkeyCount = model.unavailableHotkeyCount
+        model = .defaults
+        model.unavailableHotkeyCount = unavailableHotkeyCount
+
+        audioEngine?.setNoiseType(model.noiseType)
+        audioEngine?.setDepthPreset(model.depthPreset)
+        audioEngine?.setVolume(model.volume)
+        refreshMenu()
+    }
+
+    private func makeAudioEngineIfNeeded() -> AudioEngineManager {
+        if let audioEngine {
+            return audioEngine
+        }
+
+        let audioEngine = AudioEngineManager(
+            noiseType: model.noiseType,
+            depthPreset: model.depthPreset,
+            volume: model.volume
         )
-        store?.dispatch(.remapResult(action: action, chord: chord))
-    }
-
-    private func isEscape(_ event: NSEvent) -> Bool {
-        event.keyCode == 53 || event.charactersIgnoringModifiers == "\u{1B}"
-    }
-
-    private func mapModifiers(from flags: NSEvent.ModifierFlags) -> Set<HotkeyModifier> {
-        let normalized = flags.intersection(.deviceIndependentFlagsMask)
-        var modifiers = Set<HotkeyModifier>()
-
-        if normalized.contains(.command) {
-            modifiers.insert(.command)
-        }
-        if normalized.contains(.control) {
-            modifiers.insert(.control)
-        }
-        if normalized.contains(.option) {
-            modifiers.insert(.option)
-        }
-        if normalized.contains(.shift) {
-            modifiers.insert(.shift)
-        }
-
-        return modifiers
-    }
-
-    private func mapKey(from event: NSEvent) -> String {
-        switch Int(event.keyCode) {
-        case 36:
-            return "Return"
-        case 48:
-            return "Tab"
-        case 49:
-            return "Space"
-        case 51:
-            return "Delete"
-        case 117:
-            return "ForwardDelete"
-        case 123:
-            return "Left"
-        case 124:
-            return "Right"
-        case 125:
-            return "Down"
-        case 126:
-            return "Up"
-        default:
-            break
-        }
-
-        guard let characters = event.charactersIgnoringModifiers,
-              !characters.isEmpty else {
-            return "KeyCode\(event.keyCode)"
-        }
-
-        if characters.count == 1 {
-            return characters.uppercased()
-        }
-        return characters
-    }
-
-    private func configureLifecycleObservers(audioEngineManager: AudioEngineManager) {
-        let routeObserver = RouteObserver { [weak self, weak audioEngineManager] change in
-            let wasRunning = audioEngineManager?.isRunning ?? false
-            audioEngineManager?.handleOutputRouteChange(change)
-            guard wasRunning else {
+        audioEngine.failureHandler = { [weak self] in
+            guard let self else {
                 return
             }
-            let playbackState: PlaybackState = (audioEngineManager?.isRunning ?? false) ? .playing : .stopped
-            self?.store?.dispatch(.syncPlaybackState(playbackState))
+            self.model.isPlaying = false
+            self.model.audioError = "Audio stopped — check your output device"
+            self.refreshMenu()
         }
-        routeObserver.startObserving()
-        self.routeObserver = routeObserver
+        self.audioEngine = audioEngine
+        return audioEngine
+    }
 
-        let sleepWakeObserver = SleepWakeObserver(
-            shouldResumeProvider: { [weak audioEngineManager] in
-                audioEngineManager?.isRunning ?? false
-            },
-            willSleepHandler: { [weak self, weak audioEngineManager] in
-                let wasRunning = audioEngineManager?.isRunning ?? false
-                audioEngineManager?.handleSystemWillSleep()
-                if wasRunning {
-                    self?.store?.dispatch(.syncPlaybackState(.stopped))
-                }
-            },
-            didWakeHandler: { [weak self, weak audioEngineManager] shouldResume in
-                audioEngineManager?.handleSystemDidWake(shouldResume: shouldResume)
-                let playbackState: PlaybackState = (audioEngineManager?.isRunning ?? false) ? .playing : .stopped
-                self?.store?.dispatch(.syncPlaybackState(playbackState))
-            }
-        )
-        sleepWakeObserver.startObserving()
-        self.sleepWakeObserver = sleepWakeObserver
+    private func saveAndRefresh() {
+        settingsStore.save(model)
+        refreshMenu()
+    }
+
+    private func refreshMenu() {
+        statusBarController?.update(model: model)
     }
 }

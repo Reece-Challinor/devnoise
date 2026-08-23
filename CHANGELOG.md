@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0] - 2026-03-01
+## [0.1.0] - Unreleased
+
+### Changed
+
+- Rebuilt the runtime as a six-file, menu-bar-only AppKit app with a reliable text `DN` status item.
+- Made procedural audio lazy, silent on launch, and limited to four noises and three depth presets.
+- Replaced remapping and permission handling with six fixed, permission-free Carbon hotkeys.
+- Reduced active persistence to noise, depth, and volume; playback always starts stopped.
+- Added focused core tests, Debug test CI, Release build CI, and concise canonical documentation.
+
+### Removed
+
+- Removed the obsolete reducer, remap, permission, fragmented audio, generated artifact, and planning scaffolding.
+
+## Phase 0 scaffold - 2026-03-01
 
 ### Added
 - Bootstrapped `DevNoise` as a macOS menu-bar-only app with no windows and no Dock icon.

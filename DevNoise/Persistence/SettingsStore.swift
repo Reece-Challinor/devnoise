@@ -1,44 +1,26 @@
 import Foundation
 
 final class SettingsStore {
-    private enum DepthPersistence {
-        static let legacyLight = "light"
-        static let legacyMedium = "medium"
-        static let legacyDeep = "deep"
-        static let currentDeep = "phase1.deep"
-    }
+    static let allowedKeys: Set<String> = [
+        "hotkeys.playStop",
+        "hotkeys.panicStop",
+        "hotkeys.nextNoise",
+        "hotkeys.cycleDepth",
+        "hotkeys.volumeUp",
+        "hotkeys.volumeDown",
+        "audio.noiseType",
+        "audio.depthPreset",
+        "audio.volume",
+        "ui.tutorialDismissed"
+    ]
 
     private enum Key {
-        static let hotkeyPlayStop = "hotkeys.playStop"
-        static let hotkeyPanicStop = "hotkeys.panicStop"
-        static let hotkeyNextNoise = "hotkeys.nextNoise"
-        static let hotkeyCycleDepth = "hotkeys.cycleDepth"
-        static let hotkeyVolumeUp = "hotkeys.volumeUp"
-        static let hotkeyVolumeDown = "hotkeys.volumeDown"
-
-        static let audioNoiseType = "audio.noiseType"
-        static let audioDepthPreset = "audio.depthPreset"
-        static let audioVolume = "audio.volume"
-
-        static let tutorialDismissed = "ui.tutorialDismissed"
-
-        static let all: [String] = [
-            hotkeyPlayStop,
-            hotkeyPanicStop,
-            hotkeyNextNoise,
-            hotkeyCycleDepth,
-            hotkeyVolumeUp,
-            hotkeyVolumeDown,
-            audioNoiseType,
-            audioDepthPreset,
-            audioVolume,
-            tutorialDismissed
-        ]
+        static let noiseType = "audio.noiseType"
+        static let depthPreset = "audio.depthPreset"
+        static let volume = "audio.volume"
     }
 
     private let userDefaults: UserDefaults
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
 
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
@@ -47,98 +29,57 @@ final class SettingsStore {
     func load() -> AppModel {
         var model = AppModel.defaults
 
-        if let noiseRaw = userDefaults.string(forKey: Key.audioNoiseType),
-           let noise = NoiseType(rawValue: noiseRaw) {
-            model.noiseType = noise
+        if let rawValue = userDefaults.string(forKey: Key.noiseType),
+           let noiseType = NoiseType(rawValue: rawValue) {
+            model.noiseType = noiseType
         }
 
-        if let depthRaw = userDefaults.string(forKey: Key.audioDepthPreset),
-           let depth = decodeDepthPreset(depthRaw) {
-            model.depthPreset = depth
+        if let rawValue = userDefaults.string(forKey: Key.depthPreset),
+           let depthPreset = Self.decodeDepth(rawValue) {
+            model.depthPreset = depthPreset
         }
 
-        if userDefaults.object(forKey: Key.audioVolume) != nil {
-            model.volume = min(max(userDefaults.double(forKey: Key.audioVolume), 0.0), 1.0)
+        if userDefaults.object(forKey: Key.volume) != nil {
+            let volume = userDefaults.double(forKey: Key.volume)
+            if volume.isFinite {
+                model.volume = min(max(volume, 0), 1)
+            }
         }
 
-        if userDefaults.object(forKey: Key.tutorialDismissed) != nil {
-            model.tutorialDismissed = userDefaults.bool(forKey: Key.tutorialDismissed)
-        }
-
-        model.hotkeyBindings = HotkeyBindings(
-            playStop: loadChord(forKey: Key.hotkeyPlayStop, fallback: HotkeyBindings.defaults.playStop),
-            panicStop: loadChord(forKey: Key.hotkeyPanicStop, fallback: HotkeyBindings.defaults.panicStop),
-            nextNoise: loadChord(forKey: Key.hotkeyNextNoise, fallback: HotkeyBindings.defaults.nextNoise),
-            cycleDepth: loadChord(forKey: Key.hotkeyCycleDepth, fallback: HotkeyBindings.defaults.cycleDepth),
-            volumeUp: loadChord(forKey: Key.hotkeyVolumeUp, fallback: HotkeyBindings.defaults.volumeUp),
-            volumeDown: loadChord(forKey: Key.hotkeyVolumeDown, fallback: HotkeyBindings.defaults.volumeDown)
-        )
-
-        if !model.hotkeyBindings.validationErrors().isEmpty {
-            model.hotkeyBindings = .defaults
-        }
-
-        model.playbackState = .stopped
+        // Playback and transient errors are intentionally never restored.
+        model.isPlaying = false
+        model.audioError = nil
+        model.unavailableHotkeyCount = 0
         return model
     }
 
-    func save(model: AppModel) {
-        userDefaults.set(model.noiseType.rawValue, forKey: Key.audioNoiseType)
-        userDefaults.set(encodeDepthPreset(model.depthPreset), forKey: Key.audioDepthPreset)
-        userDefaults.set(model.volume, forKey: Key.audioVolume)
-        userDefaults.set(model.tutorialDismissed, forKey: Key.tutorialDismissed)
-
-        saveChord(model.hotkeyBindings.playStop, forKey: Key.hotkeyPlayStop)
-        saveChord(model.hotkeyBindings.panicStop, forKey: Key.hotkeyPanicStop)
-        saveChord(model.hotkeyBindings.nextNoise, forKey: Key.hotkeyNextNoise)
-        saveChord(model.hotkeyBindings.cycleDepth, forKey: Key.hotkeyCycleDepth)
-        saveChord(model.hotkeyBindings.volumeUp, forKey: Key.hotkeyVolumeUp)
-        saveChord(model.hotkeyBindings.volumeDown, forKey: Key.hotkeyVolumeDown)
+    func save(_ model: AppModel) {
+        userDefaults.set(model.noiseType.rawValue, forKey: Key.noiseType)
+        userDefaults.set(Self.encodeDepth(model.depthPreset), forKey: Key.depthPreset)
+        userDefaults.set(min(max(model.volume, 0), 1), forKey: Key.volume)
     }
 
-    func resetToDefaults() {
-        for key in Key.all {
+    func reset() {
+        for key in Self.allowedKeys {
             userDefaults.removeObject(forKey: key)
         }
     }
 
-    private func loadChord(forKey key: String, fallback: HotkeyChord) -> HotkeyChord {
-        guard let data = userDefaults.data(forKey: key),
-              let chord = try? decoder.decode(HotkeyChord.self, from: data) else {
-            return fallback
-        }
-        return chord
-    }
-
-    private func saveChord(_ chord: HotkeyChord, forKey key: String) {
-        guard let data = try? encoder.encode(chord) else {
-            return
-        }
-        userDefaults.set(data, forKey: key)
-    }
-
-    private func decodeDepthPreset(_ storedValue: String) -> DepthPreset? {
-        switch storedValue {
-        case DepthPersistence.legacyLight:
+    private static func decodeDepth(_ rawValue: String) -> DepthPreset? {
+        switch rawValue {
+        case "light":
             return .normal
-        case DepthPersistence.legacyMedium:
+        case "medium", "phase1.deep":
             return .deep
-        case DepthPersistence.legacyDeep:
+        case "deep":
+            // Phase 0 used "deep" for the preset now named Super Deep.
             return .superDeep
-        case DepthPersistence.currentDeep:
-            return .deep
         default:
-            return DepthPreset(rawValue: storedValue)
+            return DepthPreset(rawValue: rawValue)
         }
     }
 
-    private func encodeDepthPreset(_ preset: DepthPreset) -> String {
-        switch preset {
-        case .deep:
-            // Keep legacy "deep" available for one-time migration only.
-            return DepthPersistence.currentDeep
-        default:
-            return preset.rawValue
-        }
+    private static func encodeDepth(_ preset: DepthPreset) -> String {
+        preset == .deep ? "phase1.deep" : preset.rawValue
     }
 }
