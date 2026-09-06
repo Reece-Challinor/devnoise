@@ -1,0 +1,132 @@
+<!doctype html>
+<!-- DevNoise project site. SPDX-License-Identifier: MIT -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d1117" />
+    <meta
+      name="description"
+      content="DevNoise is a tiny, private, open-source procedural noise app for the macOS menu bar."
+    />
+    <meta property="og:title" content="DevNoise — focus, without the fuss" />
+    <meta
+      property="og:description"
+      content="A tiny, keyboard-first procedural noise app that lives entirely in the macOS menu bar."
+    />
+    <meta property="og:url" content="https://reece-challinor.github.io/devnoise/" />
+    <meta property="og:image" content="https://reece-challinor.github.io/devnoise/assets/devnoise-preview.png" />
+    <meta property="og:type" content="website" />
+    <title>DevNoise — procedural focus noise for macOS</title>
+    <link rel="icon" href="assets/devnoise-mark.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="DevNoise home">
+        <img src="assets/devnoise-mark.svg" width="32" height="32" alt="" />
+        <span>DevNoise</span>
+      </a>
+      <nav>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="https://github.com/Reece-Challinor/devnoise">Source</a>
+        <a class="pill" href="https://www.linkedin.com/in/reecechallinor/">LinkedIn ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span> Open source · macOS 13+</p>
+          <h1>Focus noise.<br /><span>Nothing else.</span></h1>
+          <p class="lede">
+            A tiny, keyboard-first procedural noise app that lives entirely in your Mac menu bar.
+          </p>
+          <div class="actions">
+            <a
+              class="button primary"
+              href="https://github.com/Reece-Challinor/devnoise/releases/latest/download/DevNoise.dmg"
+            >Download DMG <span aria-hidden="true">↓</span></a>
+            <a class="button secondary" href="https://github.com/Reece-Challinor/devnoise"
+              >View on GitHub <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <p class="release-note">v1.0.0 · Universal Apple silicon + Intel · MIT licensed</p>
+        </div>
+
+        <div class="product-card" aria-label="Preview of the DevNoise menu">
+          <div class="menubar">
+            <span class="wordmark">DevNoise</span>
+            <span class="menu-symbol" aria-hidden="true">≋</span>
+          </div>
+          <div class="menu">
+            <div class="menu-title"><span class="active-dot"></span> Stopped</div>
+            <div class="separator"></div>
+            <div class="menu-row"><span>Play</span><kbd>⌃⌘N</kbd></div>
+            <div class="menu-row"><span>Noise</span><b>Pink</b></div>
+            <div class="menu-row"><span>Depth</span><b>Deep</b></div>
+            <div class="menu-row"><span>Volume</span><b>40%</b></div>
+            <div class="separator"></div>
+            <div class="menu-row muted"><span>Quit DevNoise</span><kbd>⌘Q</kbd></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="principles" aria-label="Project principles">
+        <article>
+          <span class="icon" aria-hidden="true">◌</span>
+          <h2>Invisible by design</h2>
+          <p>No windows, Dock icon, accounts, or launch noise. It is there only when you need it.</p>
+        </article>
+        <article>
+          <span class="icon" aria-hidden="true">⌁</span>
+          <h2>Generated locally</h2>
+          <p>Four procedural noise colors, synthesized on-device with zero audio files or network calls.</p>
+        </article>
+        <article>
+          <span class="icon" aria-hidden="true">◇</span>
+          <h2>Private by default</h2>
+          <p>No analytics, telemetry, microphone, accounts, update agents, or captured typing.</p>
+        </article>
+      </section>
+
+      <section class="shortcuts" id="shortcuts">
+        <div>
+          <p class="eyebrow">Keyboard first</p>
+          <h2>Stay in flow.</h2>
+          <p>Six fixed global shortcuts work from any app without asking for accessibility access.</p>
+        </div>
+        <dl>
+          <div><dt>Play / Stop</dt><dd><kbd>⌃</kbd><kbd>⌘</kbd><kbd>N</kbd></dd></div>
+          <div><dt>Panic Stop</dt><dd><kbd>⌃</kbd><kbd>⌘</kbd><kbd>esc</kbd></dd></div>
+          <div><dt>Next Noise</dt><dd><kbd>⌃</kbd><kbd>⌘</kbd><kbd>]</kbd></dd></div>
+          <div><dt>Cycle Depth</dt><dd><kbd>⌃</kbd><kbd>⌘</kbd><kbd>[</kbd></dd></div>
+          <div><dt>Volume</dt><dd><kbd>⌃</kbd><kbd>⌘</kbd><kbd>−</kbd> / <kbd>=</kbd></dd></div>
+        </dl>
+      </section>
+
+      <section class="build">
+        <p class="eyebrow">Built in the open</p>
+        <h2>Small enough to understand.</h2>
+        <p>
+          Six documented Swift files. AppKit, AVFoundation, and Carbon. No packages and no hidden services.
+        </p>
+        <div class="chips" aria-label="Project technologies">
+          <span>Swift</span><span>AppKit</span><span>AVFoundation</span><span>GitHub Actions</span><span>Make</span>
+        </div>
+        <a class="text-link" href="https://github.com/Reece-Challinor/devnoise/fork"
+          >Fork the project <span aria-hidden="true">→</span></a
+        >
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand">
+        <img src="assets/devnoise-mark.svg" width="28" height="28" alt="" />
+        <span>DevNoise</span>
+      </div>
+      <p>Designed and built by <a href="https://www.linkedin.com/in/reecechallinor/">Reece Challinor</a>.</p>
+      <p><a href="https://github.com/Reece-Challinor/devnoise/blob/main/LICENSE">MIT License</a></p>
+    </footer>
+  </body>
+</html>

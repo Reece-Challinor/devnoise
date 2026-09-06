@@ -1,0 +1,39 @@
+<!--
+  DevNoise repository and social preview.
+  Original artwork released under the repository's MIT license.
+  SPDX-License-Identifier: MIT
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title description">
+  <title id="title">DevNoise</title>
+  <desc id="description">Procedural focus noise for the macOS menu bar.</desc>
+  <defs>
+    <linearGradient id="background" x1="80" y1="20" x2="1200" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#161b22" />
+      <stop offset="1" stop-color="#0d1117" />
+    </linearGradient>
+    <linearGradient id="signal" x1="170" y1="170" x2="440" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#56d364" />
+      <stop offset="1" stop-color="#2ea043" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" rx="32" fill="url(#background)" />
+  <circle cx="212" cy="94" r="160" fill="#2ea043" opacity=".08" />
+  <circle cx="1170" cy="600" r="250" fill="#58a6ff" opacity=".06" />
+  <rect x="112" y="112" width="384" height="384" rx="96" fill="#0d1117" stroke="#30363d" stroke-width="2" />
+  <g fill="url(#signal)">
+    <rect x="189" y="275" width="38" height="58" rx="19" />
+    <rect x="249" y="224" width="38" height="160" rx="19" />
+    <rect x="309" y="176" width="38" height="256" rx="19" />
+    <rect x="369" y="235" width="38" height="138" rx="19" />
+  </g>
+  <text x="560" y="266" fill="#f0f6fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="96" font-weight="700" letter-spacing="-4">DevNoise</text>
+  <text x="566" y="330" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="30">Procedural focus noise for the macOS menu bar.</text>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" font-weight="600">
+    <rect x="566" y="378" width="112" height="42" rx="21" fill="#21262d" stroke="#30363d" />
+    <text x="595" y="406" fill="#c9d1d9">Swift</text>
+    <rect x="694" y="378" width="128" height="42" rx="21" fill="#21262d" stroke="#30363d" />
+    <text x="719" y="406" fill="#c9d1d9">AppKit</text>
+    <rect x="838" y="378" width="148" height="42" rx="21" fill="#21262d" stroke="#30363d" />
+    <text x="864" y="406" fill="#c9d1d9">MIT licensed</text>
+  </g>
+</svg>
