@@ -32,4 +32,30 @@ final class LaunchTests: XCTestCase {
             "App should be a menu-bar-only accessory (no Dock icon)"
         )
     }
+
+    func testLaunchIsStoppedWithoutAStoredTimer() throws {
+        let delegate = try XCTUnwrap(NSApp.delegate as? AppDelegate)
+
+        XCTAssertFalse(delegate.isPlaying)
+        XCTAssertEqual(delegate.timerPreset, .off)
+    }
+
+    func testBundleMetadataKeepsMenuBarOnlyContractAndVersion() {
+        XCTAssertEqual(Bundle.main.object(forInfoDictionaryKey: "LSUIElement") as? Bool, true)
+        XCTAssertEqual(
+            Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+            "1.0.0"
+        )
+    }
+
+    @MainActor
+    func testLaunchCreatesNoVisibleApplicationWindow() {
+        let visibleTitledWindows = NSApp.windows.filter {
+            $0.isVisible && $0.styleMask.contains(.titled)
+        }
+        XCTAssertTrue(
+            visibleTitledWindows.isEmpty,
+            "Only AppKit's borderless status-item infrastructure may be visible"
+        )
+    }
 }

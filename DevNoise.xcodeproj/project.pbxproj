@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F00000000000000000000020 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000100 /* AppDelegate.swift */; };
 		F00000000000000000000021 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000101 /* AppModel.swift */; };
+		F00000000000000000000022 /* SessionTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000102 /* SessionTimer.swift */; };
 		F00000000000000000000025 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000105 /* SettingsStore.swift */; };
 		F00000000000000000000027 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000107 /* HotkeyManager.swift */; };
 		F00000000000000000000029 /* AudioEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000109 /* AudioEngineManager.swift */; };
@@ -32,6 +33,7 @@
 		F0000000000000000000000E /* DevNoise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevNoise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F00000000000000000000100 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F00000000000000000000101 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F00000000000000000000102 /* SessionTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTimer.swift; sourceTree = "<group>"; };
 		F00000000000000000000105 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		F00000000000000000000107 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		F00000000000000000000109 /* AudioEngineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineManager.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				F00000000000000000000101 /* AppModel.swift */,
+				F00000000000000000000102 /* SessionTimer.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 			files = (
 				F00000000000000000000020 /* AppDelegate.swift in Sources */,
 				F00000000000000000000021 /* AppModel.swift in Sources */,
+				F00000000000000000000022 /* SessionTimer.swift in Sources */,
 				F00000000000000000000025 /* SettingsStore.swift in Sources */,
 				F00000000000000000000027 /* HotkeyManager.swift in Sources */,
 				F00000000000000000000029 /* AudioEngineManager.swift in Sources */,

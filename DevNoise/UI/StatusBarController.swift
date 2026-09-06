@@ -16,10 +16,25 @@ enum AppCommand {
     case setNoise(NoiseType)
     case setDepth(DepthPreset)
     case setVolume(Double)
+    case setTimer(SessionTimerPreset)
     case increaseVolume
     case decreaseVolume
     case reset
+    case viewLatestRelease
+    case viewLinkedIn
     case quit
+
+    /// The fixed external destination for an explicitly selected footer command.
+    var externalURL: URL? {
+        switch self {
+        case .viewLatestRelease:
+            return URL(string: "https://github.com/Reece-Challinor/devnoise/releases/latest")
+        case .viewLinkedIn:
+            return URL(string: "https://www.linkedin.com/in/reecechallinor/")
+        default:
+            return nil
+        }
+    }
 }
 
 /// Owns DevNoise's single status item and rebuilds its menu from `AppModel`.
@@ -38,11 +53,14 @@ final class StatusBarController: NSObject {
     var commandHandler: ((AppCommand) -> Void)?
 
     private let statusItem: NSStatusItem
+    private let appVersion: String
     private var model: AppModel
 
     /// Creates and immediately installs a visible status item.
-    init(model: AppModel) {
+    init(model: AppModel, bundle: Bundle = .main) {
         self.model = model
+        appVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? "Unknown"
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -68,6 +86,11 @@ final class StatusBarController: NSObject {
     /// Whether AppKit currently considers the status item visible.
     var isVisible: Bool {
         statusItem.isVisible
+    }
+
+    /// The rendered menu, exposed for focused menu-state regression tests.
+    var statusMenu: NSMenu? {
+        statusItem.menu
     }
 
     /// Applies a new model snapshot to the icon, tooltip, and command menu.
@@ -117,6 +140,10 @@ final class StatusBarController: NSObject {
             menu.addItem(disabledItem(audioError))
         }
 
+        if let safetyNotice = model.safetyNotice {
+            menu.addItem(disabledItem(safetyNotice))
+        }
+
         if model.unavailableHotkeyCount > 0 {
             menu.addItem(disabledItem("\(model.unavailableHotkeyCount) shortcut(s) unavailable"))
         }
@@ -140,10 +167,24 @@ final class StatusBarController: NSObject {
         menu.addItem(submenuItem("Noise", menu: noiseMenu()))
         menu.addItem(submenuItem("Depth", menu: depthMenu()))
         menu.addItem(submenuItem("Volume", menu: volumeMenu()))
+        let timerItem = submenuItem("Timer", menu: timerMenu())
+        timerItem.isEnabled = model.isPlaying
+        menu.addItem(timerItem)
         menu.addItem(submenuItem("Keyboard Shortcuts", menu: shortcutsMenu()))
 
         menu.addItem(.separator())
         menu.addItem(actionItem("Reset to Defaults", action: #selector(reset(_:))))
+        menu.addItem(.separator())
+
+        menu.addItem(disabledItem("Version \(appVersion)"))
+        menu.addItem(actionItem(
+            "View Latest Release… ↗",
+            action: #selector(viewLatestRelease(_:))
+        ))
+        menu.addItem(actionItem(
+            "Made with noise by Reece ↗",
+            action: #selector(viewLinkedIn(_:))
+        ))
         menu.addItem(.separator())
 
         let quitItem = actionItem("Quit DevNoise", action: #selector(quit(_:)))
@@ -198,6 +239,28 @@ final class StatusBarController: NSObject {
             item.representedObject = NSNumber(value: volume)
             item.state = abs(model.volume - volume) < 0.001 ? .on : .off
             menu.addItem(item)
+        }
+        return menu
+    }
+
+    private func timerMenu() -> NSMenu {
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+
+        for preset in SessionTimerPreset.allCases {
+            let item = actionItem(preset.title, action: #selector(selectTimer(_:)))
+            item.representedObject = preset.rawValue
+            item.state = model.timerPreset == preset ? .on : .off
+            menu.addItem(item)
+        }
+
+        if let stopDate = model.timerStopDate, model.timerPreset != .off {
+            let formatter = DateFormatter()
+            formatter.locale = .autoupdatingCurrent
+            formatter.dateStyle = .none
+            formatter.timeStyle = .short
+            menu.addItem(.separator())
+            menu.addItem(disabledItem("Stops at \(formatter.string(from: stopDate))"))
         }
         return menu
     }
@@ -261,6 +324,14 @@ final class StatusBarController: NSObject {
         commandHandler?(.setVolume(volume.doubleValue))
     }
 
+    @objc private func selectTimer(_ sender: NSMenuItem) {
+        guard let rawValue = sender.representedObject as? String,
+              let preset = SessionTimerPreset(rawValue: rawValue) else {
+            return
+        }
+        commandHandler?(.setTimer(preset))
+    }
+
     @objc private func increaseVolume(_: NSMenuItem) {
         commandHandler?(.increaseVolume)
     }
@@ -271,6 +342,14 @@ final class StatusBarController: NSObject {
 
     @objc private func reset(_: NSMenuItem) {
         commandHandler?(.reset)
+    }
+
+    @objc private func viewLatestRelease(_: NSMenuItem) {
+        commandHandler?(.viewLatestRelease)
+    }
+
+    @objc private func viewLinkedIn(_: NSMenuItem) {
+        commandHandler?(.viewLinkedIn)
     }
 
     @objc private func quit(_: NSMenuItem) {

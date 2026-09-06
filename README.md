@@ -16,6 +16,17 @@ DevNoise is a tiny, keyboard-first procedural noise app for the macOS menu bar. 
 
 [Download the latest DMG](https://github.com/Reece-Challinor/devnoise/releases/latest/download/DevNoise.dmg), open it, and drag DevNoise to Applications. DevNoise requires macOS 13 or later and supports Apple silicon and Intel Macs.
 
+To update an existing installation manually:
+
+1. Quit DevNoise.
+2. Download the newer DMG from [GitHub Releases](https://github.com/Reece-Challinor/devnoise/releases/latest).
+3. Open the DMG.
+4. Drag DevNoise into Applications.
+5. Choose **Replace** when macOS asks.
+6. Reopen the app.
+
+Saved noise, depth, and volume preferences remain because the bundle identifier is unchanged. Playback and timers do not persist. DevNoise does not contain an automatic updater or perform an in-app version check.
+
 ## Controls
 
 | Action | Shortcut |
@@ -28,6 +39,12 @@ DevNoise is a tiny, keyboard-first procedural noise app for the macOS menu bar. 
 | Volume Down | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>-</kbd> |
 
 White, pink, brown, and green noise are generated locally. Normal, Deep, and Super Deep presets shape their tone. Noise, depth, and volume are saved; playback always launches stopped.
+
+While noise is playing, the **Timer** menu can stop the current session after 15, 25, 45, or 60 minutes. The selected preset and a locale-formatted stop time appear in the menu. Choosing **Off** cancels the timer without stopping playback. Timers are session-only: every stop, reset, audio failure, output change, quit, or relaunch clears them.
+
+If macOS changes the active audio output configuration during playback—for example, headphones disconnect or the system output changes—DevNoise stops immediately and shows **Audio stopped — output device changed**. It never automatically resumes or transfers the session to another output. Press **Play Noise** explicitly to clear the message, rebuild the audio graph if needed, and start through the current device.
+
+The menu footer displays the version embedded in the app and provides fixed links to the latest GitHub Release and Reece's LinkedIn profile. Links open in the default browser only after a click; DevNoise itself makes no network request and does not check for updates.
 
 ## Build
 
@@ -46,6 +63,8 @@ Run `make` to see every build, DMG, verification, and release command.
 
 DevNoise is intentionally small. Fork the repository, create a focused branch, and open a pull request.
 
+DevNoise is a small open-source learning project. Maintenance and future updates are provided on a best-effort basis.
+
 1. Read [AGENTS.md](AGENTS.md) before changing runtime behavior.
 2. Preserve the menu-bar-only, silent, local-first product contract.
 3. Use Apple frameworks; do not add dependencies.
@@ -57,22 +76,24 @@ Keep public Swift APIs documented with `///` comments. Every Swift source file s
 <details>
 <summary><strong>Architecture</strong></summary>
 
-DevNoise is one AppKit process with six production Swift files and no external packages.
+DevNoise is one AppKit process with seven production Swift files and no external packages.
 
 ```text
 AppDelegate
 ├── StatusBarController ── menu commands ──┐
 ├── HotkeyManager ─────── global commands ├── AppModel
 ├── SettingsStore ─────── allowed defaults┘      │
+├── SessionTimer ───────── one-shot session stop ┤
 └── AudioEngineManager ◀── procedural settings ──┘
 ```
 
 - `AppDelegate.swift` starts the accessory app, installs the status item first, and wires dependencies.
 - `AppModel.swift` owns value state and command transitions.
 - `StatusBarController.swift` renders the AppKit menu and native template icon.
+- `SessionTimer.swift` schedules one transient, generation-guarded stop for the active session.
 - `SettingsStore.swift` persists only noise, depth, and volume.
 - `HotkeyManager.swift` registers six fixed Carbon hotkeys without accessibility permission.
-- `AudioEngineManager.swift` lazily owns `AVAudioEngine` and generates samples in its render callback.
+- `AudioEngineManager.swift` lazily owns `AVAudioEngine`, stops on output configuration changes, and generates samples in its render callback.
 
 The render callback uses precomputed scalar state. It must not allocate, lock, block, perform I/O, or call Objective-C APIs. Playback is never persisted.
 
@@ -84,10 +105,30 @@ The render callback uses precomputed scalar state. It must not allocate, lock, b
 
 Before a release, verify on Apple silicon and Intel where possible:
 
-- The app launches with no window, Dock icon, audio, or permission prompt.
-- The menu-bar icon, menu actions, and all six global shortcuts work.
-- Panic Stop halts audio immediately.
-- Noise, depth, and volume survive relaunch; playback does not.
+- Launch the app and confirm it is silent.
+- Confirm no Dock icon or app window appears.
+- Start and stop audio; listen for clicks or abrupt artifacts.
+- Rapidly perform Stop → Play and verify the new session continues.
+- Change volume while playing and listen for smooth ramping.
+- Change noise and depth while playing and listen for smooth transitions.
+- Set each timer preset and verify its checkmark and stop-time row.
+- Replace one active timer with another.
+- Select **Off** and verify playback continues.
+- Verify manual Stop, Panic Stop, Reset, and quit clear the timer.
+- Exercise timer expiry using the deterministic tests; do not shorten the production preset durations.
+- Disconnect AirPods or Bluetooth headphones while playing.
+- Unplug wired headphones while playing, if hardware is available.
+- Change the macOS output device while playing.
+- Confirm each detected device change stops immediately.
+- Confirm audio never transfers unexpectedly to speakers.
+- Reconnect the original headphones and confirm there is no automatic resume.
+- Explicitly press Play and confirm playback works through the current device.
+- Confirm the transient device-change message clears after explicit Play.
+- Confirm the Version row matches the built application version.
+- Click both footer links and verify they open the correct browser pages.
+- Confirm no in-app network request or automatic update check occurs.
+- Relaunch and confirm noise, depth, and volume persist while playback and timer state do not.
+- Recheck all six existing hotkeys.
 - The signed DMG installs by drag-and-drop and opens without a Gatekeeper warning.
 
 </details>

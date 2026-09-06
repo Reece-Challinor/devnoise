@@ -52,14 +52,17 @@ enum DepthPreset: String, CaseIterable {
 
 /// The complete transient state used to render the status item and its menu.
 ///
-/// Playback and errors intentionally live only in memory. `SettingsStore` persists
-/// the three audio preferences and creates a stopped model on every launch.
+/// Playback, timers, and notices intentionally live only in memory. `SettingsStore`
+/// persists the three audio preferences and creates a stopped model on every launch.
 struct AppModel: Equatable {
     var isPlaying: Bool
     var noiseType: NoiseType
     var depthPreset: DepthPreset
     var volume: Double
+    var timerPreset: SessionTimerPreset
+    var timerStopDate: Date?
     var audioError: String?
+    var safetyNotice: String?
     var unavailableHotkeyCount: Int
 
     /// The state used for first launch and Reset to Defaults.
@@ -68,7 +71,10 @@ struct AppModel: Equatable {
         noiseType: .pink,
         depthPreset: .deep,
         volume: 0.6,
+        timerPreset: .off,
+        timerStopDate: nil,
         audioError: nil,
+        safetyNotice: nil,
         unavailableHotkeyCount: 0
     )
 

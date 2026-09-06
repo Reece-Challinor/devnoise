@@ -29,14 +29,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var model = AppModel.defaults
     private let settingsStore = SettingsStore()
+    private let sessionTimer = SessionTimer()
 
     private var statusBarController: StatusBarController?
     private var hotkeyManager: HotkeyManager?
     private var audioEngine: AudioEngineManager?
 
+    /// Whether the application model currently reports active playback.
+    var isPlaying: Bool {
+        model.isPlaying
+    }
+
+    /// The current transient timer choice.
+    var timerPreset: SessionTimerPreset {
+        model.timerPreset
+    }
+
     /// Builds the menu-bar UI, restores preferences, and registers fixed hotkeys.
     func applicationDidFinishLaunching(_: Notification) {
         NSApp.setActivationPolicy(.accessory)
+
+        sessionTimer.expiryHandler = { [weak self] in
+            self?.timerExpired()
+        }
 
         // Install visible UI first. Audio is not constructed until an explicit Play.
         let statusBarController = StatusBarController(model: model)
@@ -68,6 +83,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Unregisters global hotkeys and immediately silences any active renderer.
     func applicationWillTerminate(_: Notification) {
+        sessionTimer.cancel()
         hotkeyManager?.unregisterAll()
         audioEngine?.panicStop()
     }
@@ -84,12 +100,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             setDepth(depthPreset)
         case .setVolume(let volume):
             setVolume(volume)
+        case .setTimer(let preset):
+            setTimer(preset)
         case .increaseVolume:
             setVolume(model.adjustedVolume(by: 0.05))
         case .decreaseVolume:
             setVolume(model.adjustedVolume(by: -0.05))
         case .reset:
             reset()
+        case .viewLatestRelease, .viewLinkedIn:
+            if let url = command.externalURL {
+                NSWorkspace.shared.open(url)
+            }
         case .quit:
             NSApp.terminate(nil)
         }
@@ -116,13 +138,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func togglePlayback() {
         if model.isPlaying {
-            audioEngine?.stop()
-            model.isPlaying = false
-            model.audioError = nil
-            refreshMenu()
+            stopGracefully()
             return
         }
 
+        cancelSessionTimer()
+        model.safetyNotice = nil
         let engine = makeAudioEngineIfNeeded()
         do {
             try engine.start()
@@ -136,7 +157,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func stopImmediately() {
+        cancelSessionTimer()
         audioEngine?.panicStop()
+        model.isPlaying = false
+        model.audioError = nil
+        refreshMenu()
+    }
+
+    private func stopGracefully() {
+        cancelSessionTimer()
+        audioEngine?.stop()
         model.isPlaying = false
         model.audioError = nil
         refreshMenu()
@@ -178,7 +208,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         saveAndRefresh()
     }
 
+    private func setTimer(_ preset: SessionTimerPreset) {
+        guard sessionTimer.select(preset, isPlaying: model.isPlaying) else {
+            return
+        }
+        syncSessionTimerState()
+        refreshMenu()
+    }
+
+    private func timerExpired() {
+        stopGracefully()
+    }
+
     private func reset() {
+        cancelSessionTimer()
         audioEngine?.stop()
         settingsStore.reset()
 
@@ -202,16 +245,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             depthPreset: model.depthPreset,
             volume: model.volume
         )
-        audioEngine.failureHandler = { [weak self] in
+        audioEngine.outputChangeHandler = { [weak self] in
             guard let self else {
                 return
             }
-            self.model.isPlaying = false
-            self.model.audioError = "Audio stopped — check your output device"
-            self.refreshMenu()
+            if Thread.isMainThread {
+                self.stopForOutputChange()
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.stopForOutputChange()
+                }
+            }
         }
         self.audioEngine = audioEngine
         return audioEngine
+    }
+
+    private func stopForOutputChange() {
+        cancelSessionTimer()
+        model.isPlaying = false
+        model.audioError = nil
+        model.safetyNotice = "Audio stopped — output device changed"
+        refreshMenu()
+    }
+
+    private func cancelSessionTimer() {
+        sessionTimer.cancel()
+        syncSessionTimerState()
+    }
+
+    private func syncSessionTimerState() {
+        model.timerPreset = sessionTimer.selectedPreset
+        model.timerStopDate = sessionTimer.stopDate
     }
 
     private func saveAndRefresh() {

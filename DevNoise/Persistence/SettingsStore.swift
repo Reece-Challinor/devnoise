@@ -10,7 +10,7 @@ import Foundation
 
 /// Loads and saves DevNoise preferences through an injected `UserDefaults` store.
 ///
-/// Playback, errors, hotkey state, and user activity are never persisted.
+/// Playback, timers, notices, errors, hotkey state, and activity are never persisted.
 final class SettingsStore {
     /// The complete persistence allowlist used by saves and Reset to Defaults.
     static let allowedKeys: Set<String> = [
@@ -53,7 +53,7 @@ final class SettingsStore {
             }
         }
 
-        // Playback and transient errors are intentionally never restored.
+        // Playback and all transient session state are intentionally never restored.
         model.isPlaying = false
         model.audioError = nil
         model.unavailableHotkeyCount = 0

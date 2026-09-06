@@ -6,29 +6,29 @@
 //  SPDX-License-Identifier: MIT
 //
 
-import AppKit
 import AVFoundation
 import Darwin
 import Foundation
 
-/// Owns the on-demand audio graph, output recovery, and real-time renderer.
+/// Owns the on-demand audio graph, output safety handling, and real-time renderer.
 ///
 /// Creating this object does not construct or start an `AVAudioEngine`. The graph
 /// is built by the first explicit `start()` call and is reused for later playback.
 final class AudioEngineManager {
-    /// Called on the main thread when an active output route cannot be recovered.
-    var failureHandler: (() -> Void)?
+    /// Called on the main thread after an active output configuration changes.
+    var outputChangeHandler: (() -> Void)?
 
     private let renderer: NoiseRenderer
     private var engine: AVAudioEngine?
     private var sourceNode: AVAudioSourceNode?
     private var configurationObserver: NSObjectProtocol?
-    private var wakeObserver: NSObjectProtocol?
     private var pauseWorkItem: DispatchWorkItem?
-    private var isRecovering = false
+    private var state = AudioEngineState()
 
     /// Whether the renderer is currently gated on for playback.
-    private(set) var isPlaying = false
+    var isPlaying: Bool {
+        state.isPlaying
+    }
 
     /// Creates a lazy manager with the user's current audio selections.
     init(noiseType: NoiseType, depthPreset: DepthPreset, volume: Double) {
@@ -37,23 +37,12 @@ final class AudioEngineManager {
             depthPreset: depthPreset,
             volume: volume
         )
-
-        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didWakeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.recoverIfNeeded()
-        }
     }
 
     deinit {
         pauseWorkItem?.cancel()
         if let configurationObserver {
             NotificationCenter.default.removeObserver(configurationObserver)
-        }
-        if let wakeObserver {
-            NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver)
         }
         engine?.stop()
     }
@@ -63,8 +52,13 @@ final class AudioEngineManager {
         pauseWorkItem?.cancel()
         pauseWorkItem = nil
 
+        if state.configurationNeedsRepair {
+            resetGraph()
+        }
+
         if engine == nil {
             try buildGraph()
+            state.didRepairConfiguration()
         }
 
         guard let engine else {
@@ -77,25 +71,26 @@ final class AudioEngineManager {
                 engine.prepare()
                 try engine.start()
             }
-            isPlaying = true
+            state.didStart()
+            observeConfigurationChanges(for: engine)
         } catch {
             renderer.stop()
-            isPlaying = false
+            state.didFail()
             throw error
         }
     }
 
     /// Fades audio out, then pauses the engine after the renderer reaches silence.
     func stop() {
-        guard isPlaying else {
+        guard state.isPlaying else {
             return
         }
 
-        isPlaying = false
+        let stopGeneration = state.beginGracefulStop()
         renderer.stop()
 
         let workItem = DispatchWorkItem { [weak self] in
-            guard let self, !self.isPlaying else {
+            guard let self, self.state.canCompleteGracefulStop(stopGeneration) else {
                 return
             }
             self.engine?.pause()
@@ -109,7 +104,7 @@ final class AudioEngineManager {
     func panicStop() {
         pauseWorkItem?.cancel()
         pauseWorkItem = nil
-        isPlaying = false
+        state.stopImmediately()
         renderer.stop()
         engine?.stop()
         renderer.requireFreshStart()
@@ -149,37 +144,95 @@ final class AudioEngineManager {
         engine.connect(sourceNode, to: engine.mainMixerNode, format: format)
         engine.mainMixerNode.outputVolume = 1
 
+        self.engine = engine
+        self.sourceNode = sourceNode
+    }
+
+    private func observeConfigurationChanges(for engine: AVAudioEngine) {
+        guard configurationObserver == nil else {
+            return
+        }
+
         configurationObserver = NotificationCenter.default.addObserver(
             forName: .AVAudioEngineConfigurationChange,
             object: engine,
             queue: .main
         ) { [weak self] _ in
-            self?.recoverIfNeeded()
+            self?.handleConfigurationChange()
         }
-
-        self.engine = engine
-        self.sourceNode = sourceNode
     }
 
-    private func recoverIfNeeded() {
-        guard isPlaying, !isRecovering, let engine else {
-            return
+    private func resetGraph() {
+        if let configurationObserver {
+            NotificationCenter.default.removeObserver(configurationObserver)
         }
+        configurationObserver = nil
+        engine?.stop()
+        sourceNode = nil
+        engine = nil
+    }
 
-        isRecovering = true
-        engine.stop()
-        renderer.start(fresh: true)
+    private func handleConfigurationChange() {
+        let wasPlaying = state.configurationChanged()
+        pauseWorkItem?.cancel()
+        pauseWorkItem = nil
+        renderer.stop()
+        engine?.stop()
+        renderer.requireFreshStart()
 
-        do {
-            engine.prepare()
-            try engine.start()
-            isRecovering = false
-        } catch {
-            renderer.stop()
-            isPlaying = false
-            isRecovering = false
-            failureHandler?()
+        if wasPlaying {
+            outputChangeHandler?()
         }
+    }
+}
+
+/// Tracks playback generations and whether the audio graph must be rebuilt.
+struct AudioEngineState {
+    private(set) var isPlaying = false
+    private(set) var configurationNeedsRepair = false
+    private var generation: UInt = 0
+
+    /// Marks a successful explicit start and invalidates old stop completions.
+    mutating func didStart() {
+        generation &+= 1
+        isPlaying = true
+    }
+
+    /// Begins a graceful stop and returns its unique completion generation.
+    mutating func beginGracefulStop() -> UInt {
+        generation &+= 1
+        isPlaying = false
+        return generation
+    }
+
+    /// Whether a delayed graceful-stop completion still belongs to this session.
+    func canCompleteGracefulStop(_ stopGeneration: UInt) -> Bool {
+        !isPlaying && stopGeneration == generation
+    }
+
+    /// Invalidates delayed work and marks playback stopped immediately.
+    mutating func stopImmediately() {
+        generation &+= 1
+        isPlaying = false
+    }
+
+    /// Records a configuration change and returns whether playback was active.
+    mutating func configurationChanged() -> Bool {
+        let wasPlaying = isPlaying
+        stopImmediately()
+        configurationNeedsRepair = true
+        return wasPlaying
+    }
+
+    /// Marks a newly built graph ready for the next explicit start.
+    mutating func didRepairConfiguration() {
+        configurationNeedsRepair = false
+    }
+
+    /// Records a start failure so the next explicit attempt rebuilds the graph.
+    mutating func didFail() {
+        stopImmediately()
+        configurationNeedsRepair = true
     }
 }
 
