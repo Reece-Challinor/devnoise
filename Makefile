@@ -27,7 +27,7 @@ help: ## Show the available commands.
 	  '  make checksum       Build a DMG and SHA-256 sidecar.' \
 	  '  make release        Sign, notarize, staple, and verify a DMG.' \
 	  '' \
-	  'Release commands require the environment documented in docs/RELEASING.md.'
+	  'Release setup and QA are documented in README.md.'
 
 open: ## Open the project in Xcode.
 	open $(PROJECT)

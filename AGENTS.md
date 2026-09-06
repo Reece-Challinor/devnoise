@@ -24,4 +24,11 @@ Playback state must never persist. The audio render callback must not allocate m
 
 ## Verify changes
 
-Run `make verify`. Audio or lifecycle changes also need the manual checks in [CONTRIBUTING.md](CONTRIBUTING.md).
+Run `make verify`. Audio or lifecycle changes also need the [manual QA checklist](README.md#manual-qa).
+
+## Documentation
+
+- Begin every Swift source file with a one-line purpose and `SPDX-License-Identifier: MIT`.
+- Document public Swift boundaries with concise `///` comments.
+- Keep contributor, architecture, security, and release guidance in `README.md`.
+- Use GitHub Releases for version history; do not add a standalone changelog.
