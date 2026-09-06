@@ -26,10 +26,10 @@ base64 -i AuthKey_ABC123.p8 | pbcopy
 
 1. Update `MARKETING_VERSION` and `CHANGELOG.md`.
 2. Run `make verify` and complete [the manual QA checklist](../CONTRIBUTING.md#manual-qa).
-3. Create and push the signed tag:
+3. Create and push the annotated tag:
 
 ```bash
-git tag -s v1.0.0 -m "DevNoise 1.0.0"
+git tag -a v1.0.0 -m "DevNoise 1.0.0"
 git push origin v1.0.0
 ```
 
