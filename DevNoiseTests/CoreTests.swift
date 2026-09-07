@@ -264,7 +264,10 @@ final class SessionTimerTests: XCTestCase {
         XCTAssertTrue(timer.select(.twentyFiveMinutes, isPlaying: true))
         XCTAssertTrue(timer.select(.fifteenMinutes, isPlaying: true))
 
-        XCTAssertEqual(scheduler.entries.map(\.delay), [25 * 60, 15 * 60])
+        XCTAssertEqual(
+            scheduler.entries.map(\.delay),
+            [TimeInterval(25 * 60), TimeInterval(15 * 60)]
+        )
         XCTAssertTrue(scheduler.entries[0].isCancelled)
         XCTAssertEqual(timer.selectedPreset, .fifteenMinutes)
         XCTAssertEqual(timer.stopDate, startDate.addingTimeInterval(15 * 60))
