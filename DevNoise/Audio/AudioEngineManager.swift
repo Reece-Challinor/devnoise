@@ -101,7 +101,7 @@ final class AudioEngineManager {
     }
 
     /// Stops the engine immediately and requires the next start to begin from silence.
-    func panicStop() {
+    func stopImmediately() {
         pauseWorkItem?.cancel()
         pauseWorkItem = nil
         state.stopImmediately()

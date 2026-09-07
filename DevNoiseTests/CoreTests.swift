@@ -120,9 +120,17 @@ final class CoreTests: XCTestCase {
 
         XCTAssertEqual(actions.map(\.rawValue), [1, 2, 3, 4, 5, 6])
         XCTAssertEqual(Set(actions.map(\.rawValue)).count, actions.count)
+        XCTAssertEqual(actions.map(\.title), [
+            "Play / Pause",
+            "Cycle Timer",
+            "Next Noise",
+            "Cycle Depth",
+            "Volume Up",
+            "Volume Down"
+        ])
         XCTAssertEqual(actions.map(\.shortcut), [
             "⌃⌘N",
-            "⌃⌘Esc",
+            "⌃⌘T",
             "⌃⌘]",
             "⌃⌘[",
             "⌃⌘=",
@@ -252,6 +260,40 @@ final class SessionTimerTests: XCTestCase {
         XCTAssertNil(timer.stopDate)
         XCTAssertTrue(scheduler.entries.isEmpty)
         XCTAssertEqual(expiryCount, 0)
+
+        XCTAssertFalse(timer.cycle(isPlaying: false))
+        XCTAssertEqual(timer.selectedPreset, .off)
+        XCTAssertTrue(scheduler.entries.isEmpty)
+    }
+
+    func testCycleAdvancesEveryPresetAndWrapsToOff() {
+        let startDate = Date(timeIntervalSince1970: 1_000)
+        let scheduler = TestTimerScheduler()
+        let timer = SessionTimer(now: { startDate }, schedule: scheduler.schedule)
+        let expectedPresets: [SessionTimerPreset] = [
+            .fifteenMinutes,
+            .twentyFiveMinutes,
+            .fortyFiveMinutes,
+            .sixtyMinutes,
+            .off
+        ]
+
+        for preset in expectedPresets {
+            XCTAssertTrue(timer.cycle(isPlaying: true))
+            XCTAssertEqual(timer.selectedPreset, preset)
+            XCTAssertEqual(
+                timer.stopDate,
+                preset.duration.map { startDate.addingTimeInterval($0) }
+            )
+        }
+
+        XCTAssertEqual(scheduler.entries.map(\.delay), [
+            TimeInterval(15 * 60),
+            TimeInterval(25 * 60),
+            TimeInterval(45 * 60),
+            TimeInterval(60 * 60)
+        ])
+        XCTAssertTrue(scheduler.entries.allSatisfy(\.isCancelled))
     }
 
     func testReplacingTimerRejectsStaleCallbackAndExpiresCurrentTimerOnce() {
@@ -286,8 +328,7 @@ final class SessionTimerTests: XCTestCase {
     func testOffAndEveryPlaybackStopPathCancelWithoutInvokingExpiry() {
         let cancellationReasons = [
             "Off",
-            "manual Stop",
-            "Panic Stop",
+            "manual Pause",
             "Reset",
             "audio failure",
             "output-device change",
@@ -334,7 +375,7 @@ final class AudioLifecycleTests: XCTestCase {
         XCTAssertFalse(state.canCompleteGracefulStop(oldStop))
     }
 
-    func testPanicStopInvalidatesPendingGracefulCompletion() {
+    func testImmediateSafetyStopInvalidatesPendingGracefulCompletion() {
         var state = AudioEngineState()
         state.didStart()
         let oldStop = state.beginGracefulStop()
@@ -383,6 +424,33 @@ final class AudioLifecycleTests: XCTestCase {
 
 /// Menu-level tests for timer state, transient notices, and release metadata.
 final class MenuTests: XCTestCase {
+    @MainActor
+    func testMenuUsesPlayPauseAndShowsAllSixFixedShortcuts() throws {
+        let controller = StatusBarController(model: .defaults)
+        var menu = try XCTUnwrap(controller.statusMenu)
+
+        XCTAssertNotNil(menu.items.first { $0.title == "Play Noise    ⌃⌘N" })
+        XCTAssertFalse(menu.items.contains { $0.title.localizedCaseInsensitiveContains("panic") })
+
+        let shortcuts = try XCTUnwrap(
+            menu.items.first { $0.title == "Keyboard Shortcuts" }?.submenu
+        )
+        XCTAssertEqual(shortcuts.items.map(\.title), [
+            "Play / Pause    ⌃⌘N",
+            "Cycle Timer    ⌃⌘T",
+            "Next Noise    ⌃⌘]",
+            "Cycle Depth    ⌃⌘[",
+            "Volume Up    ⌃⌘=",
+            "Volume Down    ⌃⌘−"
+        ])
+
+        var playing = AppModel.defaults
+        playing.isPlaying = true
+        controller.update(model: playing)
+        menu = try XCTUnwrap(controller.statusMenu)
+        XCTAssertNotNil(menu.items.first { $0.title == "Pause Noise    ⌃⌘N" })
+    }
+
     @MainActor
     func testTimerMenuIsDisabledWhileStoppedAndTracksActivePreset() throws {
         let controller = StatusBarController(model: .defaults)

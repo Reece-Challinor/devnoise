@@ -9,34 +9,6 @@
 import AppKit
 import Foundation
 
-/// A user action emitted by the menu and handled by the lifecycle coordinator.
-enum AppCommand {
-    case togglePlayback
-    case panicStop
-    case setNoise(NoiseType)
-    case setDepth(DepthPreset)
-    case setVolume(Double)
-    case setTimer(SessionTimerPreset)
-    case increaseVolume
-    case decreaseVolume
-    case reset
-    case viewLatestRelease
-    case viewLinkedIn
-    case quit
-
-    /// The fixed external destination for an explicitly selected footer command.
-    var externalURL: URL? {
-        switch self {
-        case .viewLatestRelease:
-            return URL(string: "https://github.com/Reece-Challinor/devnoise/releases/latest")
-        case .viewLinkedIn:
-            return URL(string: "https://www.linkedin.com/in/reecechallinor/")
-        default:
-            return nil
-        }
-    }
-}
-
 /// Owns DevNoise's single status item and rebuilds its menu from `AppModel`.
 ///
 /// The icon is a native template symbol so macOS controls its contrast in light,
@@ -150,18 +122,11 @@ final class StatusBarController: NSObject {
 
         menu.addItem(.separator())
 
-        let playTitle = model.isPlaying ? "Stop Noise" : "Play Noise"
+        let playTitle = model.isPlaying ? "Pause Noise" : "Play Noise"
         menu.addItem(actionItem(
-            "\(playTitle)    \(HotkeyAction.playStop.shortcut)",
+            "\(playTitle)    \(HotkeyAction.playPause.shortcut)",
             action: #selector(togglePlayback(_:))
         ))
-
-        let panicItem = actionItem(
-            "Panic Stop    \(HotkeyAction.panicStop.shortcut)",
-            action: #selector(panicStop(_:))
-        )
-        panicItem.isEnabled = model.isPlaying
-        menu.addItem(panicItem)
 
         menu.addItem(.separator())
         menu.addItem(submenuItem("Noise", menu: noiseMenu()))
@@ -295,10 +260,6 @@ final class StatusBarController: NSObject {
 
     @objc private func togglePlayback(_: NSMenuItem) {
         commandHandler?(.togglePlayback)
-    }
-
-    @objc private func panicStop(_: NSMenuItem) {
-        commandHandler?(.panicStop)
     }
 
     @objc private func selectNoise(_ sender: NSMenuItem) {

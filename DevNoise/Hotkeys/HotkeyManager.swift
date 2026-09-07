@@ -11,8 +11,8 @@ import Foundation
 
 /// A fixed global shortcut and its stable Carbon identifier.
 enum HotkeyAction: UInt32, CaseIterable {
-    case playStop = 1
-    case panicStop
+    case playPause = 1
+    case cycleTimer
     case nextNoise
     case cycleDepth
     case volumeUp
@@ -21,10 +21,10 @@ enum HotkeyAction: UInt32, CaseIterable {
     /// The user-facing action name.
     var title: String {
         switch self {
-        case .playStop:
-            return "Play / Stop"
-        case .panicStop:
-            return "Panic Stop"
+        case .playPause:
+            return "Play / Pause"
+        case .cycleTimer:
+            return "Cycle Timer"
         case .nextNoise:
             return "Next Noise"
         case .cycleDepth:
@@ -43,10 +43,10 @@ enum HotkeyAction: UInt32, CaseIterable {
 
     fileprivate var keyCode: UInt32 {
         switch self {
-        case .playStop:
+        case .playPause:
             return UInt32(kVK_ANSI_N)
-        case .panicStop:
-            return UInt32(kVK_Escape)
+        case .cycleTimer:
+            return UInt32(kVK_ANSI_T)
         case .nextNoise:
             return UInt32(kVK_ANSI_RightBracket)
         case .cycleDepth:
@@ -60,10 +60,10 @@ enum HotkeyAction: UInt32, CaseIterable {
 
     private var keyLabel: String {
         switch self {
-        case .playStop:
+        case .playPause:
             return "N"
-        case .panicStop:
-            return "Esc"
+        case .cycleTimer:
+            return "T"
         case .nextNoise:
             return "]"
         case .cycleDepth:
@@ -74,6 +74,24 @@ enum HotkeyAction: UInt32, CaseIterable {
             return "−"
         }
     }
+
+    /// The application command dispatched for this shortcut.
+    var command: AppCommand {
+        switch self {
+        case .playPause:
+            return .togglePlayback
+        case .cycleTimer:
+            return .cycleTimer
+        case .nextNoise:
+            return .nextNoise
+        case .cycleDepth:
+            return .cycleDepth
+        case .volumeUp:
+            return .increaseVolume
+        case .volumeDown:
+            return .decreaseVolume
+        }
+    }
 }
 
 /// Owns exclusive Carbon registrations and dispatches recognized shortcut actions.
@@ -81,8 +99,8 @@ enum HotkeyAction: UInt32, CaseIterable {
 /// Carbon registered hotkeys report only the six declared chords. The manager does
 /// not install an event tap, observe arbitrary keyboard input, or require permissions.
 final class HotkeyManager {
-    /// Receives a recognized fixed shortcut action.
-    var actionHandler: ((HotkeyAction) -> Void)?
+    /// Receives the application command for a recognized fixed shortcut.
+    var commandHandler: ((AppCommand) -> Void)?
 
     private static let signature: OSType = 0x44564E53 // "DVNS"
     private static let modifiers = UInt32(controlKey | cmdKey)
@@ -183,7 +201,7 @@ final class HotkeyManager {
             return OSStatus(eventNotHandledErr)
         }
 
-        actionHandler?(action)
+        commandHandler?(action.command)
         return noErr
     }
 }

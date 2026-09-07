@@ -31,8 +31,8 @@ Saved noise, depth, and volume preferences remain because the bundle identifier 
 
 | Action | Shortcut |
 | --- | --- |
-| Play / Stop | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>N</kbd> |
-| Panic Stop | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>Escape</kbd> |
+| Play / Pause | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>N</kbd> |
+| Cycle Timer | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>T</kbd> |
 | Next Noise | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>]</kbd> |
 | Cycle Depth | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>[</kbd> |
 | Volume Up | <kbd>Control</kbd> <kbd>Command</kbd> <kbd>=</kbd> |
@@ -40,7 +40,7 @@ Saved noise, depth, and volume preferences remain because the bundle identifier 
 
 White, pink, brown, and green noise are generated locally. Normal, Deep, and Super Deep presets shape their tone. Noise, depth, and volume are saved; playback always launches stopped.
 
-While noise is playing, the **Timer** menu can stop the current session after 15, 25, 45, or 60 minutes. The selected preset and a locale-formatted stop time appear in the menu. Choosing **Off** cancels the timer without stopping playback. Timers are session-only: every stop, reset, audio failure, output change, quit, or relaunch clears them.
+While noise is playing, the **Timer** menu can pause the current session after 15, 25, 45, or 60 minutes. The selected preset and a locale-formatted stop time appear in the menu. **Cycle Timer** advances through Off → 15 → 25 → 45 → 60 → Off; cycling to Off cancels the timer without pausing playback. The shortcut has no effect while playback is paused. Timers are session-only: every pause, reset, audio failure, output change, quit, or relaunch clears them.
 
 If macOS changes the active audio output configuration during playback—for example, headphones disconnect or the system output changes—DevNoise stops immediately and shows **Audio stopped — output device changed**. It never automatically resumes or transfers the session to another output. Press **Play Noise** explicitly to clear the message, rebuild the audio graph if needed, and start through the current device.
 
@@ -107,14 +107,16 @@ Before a release, verify on Apple silicon and Intel where possible:
 
 - Launch the app and confirm it is silent.
 - Confirm no Dock icon or app window appears.
-- Start and stop audio; listen for clicks or abrupt artifacts.
-- Rapidly perform Stop → Play and verify the new session continues.
+- Play and pause audio; listen for clicks or abrupt artifacts.
+- Rapidly perform Pause → Play and verify the new session continues.
 - Change volume while playing and listen for smooth ramping.
 - Change noise and depth while playing and listen for smooth transitions.
 - Set each timer preset and verify its checkmark and stop-time row.
 - Replace one active timer with another.
+- Use Cycle Timer and verify Off → 15 → 25 → 45 → 60 → Off in order.
+- While paused, use Cycle Timer and verify it does not start playback or a timer.
 - Select **Off** and verify playback continues.
-- Verify manual Stop, Panic Stop, Reset, and quit clear the timer.
+- Verify manual Pause, Reset, and quit clear the timer.
 - Exercise timer expiry using the deterministic tests; do not shorten the production preset durations.
 - Disconnect AirPods or Bluetooth headphones while playing.
 - Unplug wired headphones while playing, if hardware is available.
@@ -128,7 +130,7 @@ Before a release, verify on Apple silicon and Intel where possible:
 - Click both footer links and verify they open the correct browser pages.
 - Confirm no in-app network request or automatic update check occurs.
 - Relaunch and confirm noise, depth, and volume persist while playback and timer state do not.
-- Recheck all six existing hotkeys.
+- Recheck all six fixed hotkeys, including Play / Pause and Cycle Timer.
 - The signed DMG installs by drag-and-drop and opens without a Gatekeeper warning.
 
 </details>

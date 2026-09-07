@@ -42,6 +42,22 @@ enum SessionTimerPreset: String, CaseIterable {
             return 60 * 60
         }
     }
+
+    /// The next choice in the fixed Off → 15 → 25 → 45 → 60 → Off cycle.
+    var next: SessionTimerPreset {
+        switch self {
+        case .off:
+            return .fifteenMinutes
+        case .fifteenMinutes:
+            return .twentyFiveMinutes
+        case .twentyFiveMinutes:
+            return .fortyFiveMinutes
+        case .fortyFiveMinutes:
+            return .sixtyMinutes
+        case .sixtyMinutes:
+            return .off
+        }
+    }
 }
 
 /// Owns one cancellable main-thread timer without persisting session state.
@@ -96,6 +112,15 @@ final class SessionTimer {
             self?.expire(ifCurrent: scheduledGeneration)
         }
         return true
+    }
+
+    /// Advances the fixed timer cycle while playback is active.
+    @discardableResult
+    func cycle(isPlaying: Bool) -> Bool {
+        guard isPlaying else {
+            return false
+        }
+        return select(selectedPreset.next, isPlaying: true)
     }
 
     /// Cancels the current timer without affecting audio playback.

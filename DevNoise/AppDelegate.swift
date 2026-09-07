@@ -9,6 +9,36 @@
 import AppKit
 import Foundation
 
+/// An application action shared by menu items and fixed global shortcuts.
+enum AppCommand {
+    case togglePlayback
+    case cycleTimer
+    case nextNoise
+    case cycleDepth
+    case setNoise(NoiseType)
+    case setDepth(DepthPreset)
+    case setVolume(Double)
+    case setTimer(SessionTimerPreset)
+    case increaseVolume
+    case decreaseVolume
+    case reset
+    case viewLatestRelease
+    case viewLinkedIn
+    case quit
+
+    /// The fixed external destination for an explicitly selected footer command.
+    var externalURL: URL? {
+        switch self {
+        case .viewLatestRelease:
+            return URL(string: "https://github.com/Reece-Challinor/devnoise/releases/latest")
+        case .viewLinkedIn:
+            return URL(string: "https://www.linkedin.com/in/reecechallinor/")
+        default:
+            return nil
+        }
+    }
+}
+
 /// The application lifecycle coordinator and single owner of runtime services.
 ///
 /// Startup order is intentional: the status item is installed before preferences
@@ -64,15 +94,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let hotkeyManager = HotkeyManager()
         self.hotkeyManager = hotkeyManager
-        hotkeyManager.actionHandler = { [weak self] action in
+        hotkeyManager.commandHandler = { [weak self] command in
             guard let self else {
                 return
             }
             if Thread.isMainThread {
-                self.handle(action)
+                self.handle(command)
             } else {
                 DispatchQueue.main.async { [weak self] in
-                    self?.handle(action)
+                    self?.handle(command)
                 }
             }
         }
@@ -85,15 +115,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_: Notification) {
         sessionTimer.cancel()
         hotkeyManager?.unregisterAll()
-        audioEngine?.panicStop()
+        audioEngine?.stopImmediately()
     }
 
     private func handle(_ command: AppCommand) {
         switch command {
         case .togglePlayback:
             togglePlayback()
-        case .panicStop:
-            stopImmediately()
+        case .cycleTimer:
+            cycleTimer()
+        case .nextNoise:
+            model.cycleNoise()
+            applyNoiseSelection()
+        case .cycleDepth:
+            model.cycleDepth()
+            applyDepthSelection()
         case .setNoise(let noiseType):
             setNoise(noiseType)
         case .setDepth(let depthPreset):
@@ -117,25 +153,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func handle(_ action: HotkeyAction) {
-        switch action {
-        case .playStop:
-            togglePlayback()
-        case .panicStop:
-            stopImmediately()
-        case .nextNoise:
-            model.cycleNoise()
-            applyNoiseSelection()
-        case .cycleDepth:
-            model.cycleDepth()
-            applyDepthSelection()
-        case .volumeUp:
-            setVolume(model.adjustedVolume(by: 0.05))
-        case .volumeDown:
-            setVolume(model.adjustedVolume(by: -0.05))
-        }
-    }
-
     private func togglePlayback() {
         if model.isPlaying {
             stopGracefully()
@@ -153,14 +170,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             model.isPlaying = false
             model.audioError = "Audio unavailable — check your output device"
         }
-        refreshMenu()
-    }
-
-    private func stopImmediately() {
-        cancelSessionTimer()
-        audioEngine?.panicStop()
-        model.isPlaying = false
-        model.audioError = nil
         refreshMenu()
     }
 
@@ -210,6 +219,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setTimer(_ preset: SessionTimerPreset) {
         guard sessionTimer.select(preset, isPlaying: model.isPlaying) else {
+            return
+        }
+        syncSessionTimerState()
+        refreshMenu()
+    }
+
+    private func cycleTimer() {
+        guard sessionTimer.cycle(isPlaying: model.isPlaying) else {
             return
         }
         syncSessionTimerState()
