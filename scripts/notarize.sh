@@ -5,7 +5,7 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Submit an artifact for notarization and wait for completion.
+Submit an artifact for notarization and report progress until completion.
 
 Usage:
   scripts/notarize.sh [path/to/artifact]
@@ -101,22 +101,49 @@ SAFE_ARTIFACT_NAME="${ARTIFACT_NAME// /_}"
 LOG_PATH="${DEVNOISE_NOTARY_LOG_PATH:-${NOTARY_LOG_DIR}/${SAFE_ARTIFACT_NAME}.notary.json}"
 
 echo "Submitting for notarization: $SUBMIT_PATH"
-if ! NOTARY_OUTPUT="$(xcrun notarytool submit "$SUBMIT_PATH" "${NOTARY_AUTH_ARGS[@]}" --wait --output-format json 2>&1)"; then
-  printf '%s\n' "$NOTARY_OUTPUT" > "$LOG_PATH"
+if ! SUBMIT_OUTPUT="$(xcrun notarytool submit "$SUBMIT_PATH" "${NOTARY_AUTH_ARGS[@]}" --output-format json 2>&1)"; then
+  printf '%s\n' "$SUBMIT_OUTPUT" > "$LOG_PATH"
   fail "Notarization command failed. See log: $LOG_PATH"
 fi
 
-printf '%s\n' "$NOTARY_OUTPUT" > "$LOG_PATH"
+printf '%s\n' "$SUBMIT_OUTPUT" > "$LOG_PATH"
 
-STATUS="$(printf '%s\n' "$NOTARY_OUTPUT" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)"
-SUBMISSION_ID="$(printf '%s\n' "$NOTARY_OUTPUT" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)"
+SUBMISSION_ID="$(printf '%s\n' "$SUBMIT_OUTPUT" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)"
+[[ -n "$SUBMISSION_ID" ]] || fail "Unable to parse Apple's submission ID. See log: $LOG_PATH"
 
-[[ -n "$STATUS" ]] || fail "Unable to parse notarization response. See log: $LOG_PATH"
+echo "Upload complete."
+echo "- Apple submission ID: $SUBMISSION_ID"
+echo "- Apple may take several hours; checking once per minute."
 
-if [[ "$STATUS" != "Accepted" ]]; then
-  fail "Notarization status is '$STATUS'. See log: $LOG_PATH"
-fi
+while true; do
+  if ! NOTARY_OUTPUT="$(xcrun notarytool info "$SUBMISSION_ID" "${NOTARY_AUTH_ARGS[@]}" --output-format json 2>&1)"; then
+    printf '%s\n' "$NOTARY_OUTPUT" > "$LOG_PATH"
+    fail "Unable to check notarization status for $SUBMISSION_ID. See log: $LOG_PATH"
+  fi
+
+  printf '%s\n' "$NOTARY_OUTPUT" > "$LOG_PATH"
+  STATUS="$(printf '%s\n' "$NOTARY_OUTPUT" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)"
+  [[ -n "$STATUS" ]] || fail "Unable to parse notarization status. See log: $LOG_PATH"
+
+  echo "Apple notarization status: $STATUS (submission: $SUBMISSION_ID)"
+
+  case "$STATUS" in
+    Accepted)
+      break
+      ;;
+    "In Progress")
+      sleep 60
+      ;;
+    Invalid|Rejected)
+      xcrun notarytool log "$SUBMISSION_ID" "${NOTARY_AUTH_ARGS[@]}" > "$LOG_PATH" 2>&1 || true
+      fail "Notarization status is '$STATUS'. See log: $LOG_PATH"
+      ;;
+    *)
+      fail "Unexpected notarization status '$STATUS'. See log: $LOG_PATH"
+      ;;
+  esac
+done
 
 echo "Notarization accepted."
-echo "- Submission ID: ${SUBMISSION_ID:-unknown}"
+echo "- Submission ID: $SUBMISSION_ID"
 echo "- Log: $LOG_PATH"

@@ -9,6 +9,11 @@ on:
         description: Existing v-prefixed tag to release
         required: true
         type: string
+      status_only:
+        description: Check Apple's notarization history without submitting a new build
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -19,7 +24,7 @@ jobs:
   release:
     name: Sign, notarize, and publish
     runs-on: macos-15
-    timeout-minutes: 90
+    timeout-minutes: 240
     env:
       DEVNOISE_SIGN_IDENTITY: ${{ secrets.DEVNOISE_SIGN_IDENTITY }}
       DEVNOISE_CERTIFICATE_P12_BASE64: ${{ secrets.DEVNOISE_CERTIFICATE_P12_BASE64 }}
@@ -28,6 +33,7 @@ jobs:
       DEVNOISE_NOTARY_KEY_ID: ${{ secrets.DEVNOISE_NOTARY_KEY_ID }}
       DEVNOISE_NOTARY_ISSUER_ID: ${{ secrets.DEVNOISE_NOTARY_ISSUER_ID }}
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      STATUS_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.status_only || false }}
 
     steps:
       - name: Checkout release tag
@@ -97,10 +103,22 @@ jobs:
             echo "DEVNOISE_NOTARY_KEYCHAIN_PROFILE=AC_NOTARY"
           } >> "${GITHUB_ENV}"
 
+      - name: Check Apple notarization history
+        if: env.STATUS_ONLY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcrun notarytool history \
+            --keychain-profile "${DEVNOISE_NOTARY_KEYCHAIN_PROFILE}" \
+            --keychain "${DEVNOISE_NOTARY_KEYCHAIN}" \
+            --output-format json
+
       - name: Build release app
+        if: env.STATUS_ONLY != 'true'
         run: make app
 
       - name: Validate version
+        if: env.STATUS_ONLY != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -111,6 +129,7 @@ jobs:
           }
 
       - name: Sign app and DMG
+        if: env.STATUS_ONLY != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -118,6 +137,7 @@ jobs:
           scripts/dmg_build.sh dist/DevNoise.app
 
       - name: Notarize, staple, and verify
+        if: env.STATUS_ONLY != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -127,11 +147,13 @@ jobs:
           scripts/verify_gatekeeper.sh dist/DevNoise.app dist/DevNoise.dmg
 
       - name: Attest DMG provenance
+        if: env.STATUS_ONLY != 'true'
         uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/DevNoise.dmg
 
       - name: Upload workflow artifacts
+        if: env.STATUS_ONLY != 'true'
         uses: actions/upload-artifact@v7
         with:
           name: devnoise-${{ env.RELEASE_TAG }}
@@ -141,6 +163,7 @@ jobs:
             dist/DevNoise.dmg.sha256
 
       - name: Publish GitHub release
+        if: env.STATUS_ONLY != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
