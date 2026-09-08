@@ -19,7 +19,7 @@ jobs:
   release:
     name: Sign, notarize, and publish
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 90
     env:
       DEVNOISE_SIGN_IDENTITY: ${{ secrets.DEVNOISE_SIGN_IDENTITY }}
       DEVNOISE_CERTIFICATE_P12_BASE64: ${{ secrets.DEVNOISE_CERTIFICATE_P12_BASE64 }}
