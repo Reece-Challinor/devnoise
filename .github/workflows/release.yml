@@ -113,6 +113,14 @@ jobs:
             --keychain "${DEVNOISE_NOTARY_KEYCHAIN}" \
             --output-format json
 
+      - name: Checkout current release tooling
+        if: env.STATUS_ONLY != 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: .release-tools
+          sparse-checkout: scripts
+
       - name: Build release app
         if: env.STATUS_ONLY != 'true'
         run: make app
@@ -141,10 +149,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          scripts/notarize.sh dist/DevNoise.dmg
-          scripts/staple.sh dist/DevNoise.app dist/DevNoise.dmg
-          scripts/sha256.sh dist/DevNoise.dmg
-          scripts/verify_gatekeeper.sh dist/DevNoise.app dist/DevNoise.dmg
+          export DEVNOISE_DIST_DIR="${GITHUB_WORKSPACE}/dist"
+          .release-tools/scripts/notarize.sh dist/DevNoise.dmg
+          .release-tools/scripts/staple.sh dist/DevNoise.app dist/DevNoise.dmg
+          .release-tools/scripts/sha256.sh dist/DevNoise.dmg
+          .release-tools/scripts/verify_gatekeeper.sh dist/DevNoise.app dist/DevNoise.dmg
 
       - name: Attest DMG provenance
         if: env.STATUS_ONLY != 'true'

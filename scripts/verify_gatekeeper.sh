@@ -101,7 +101,11 @@ for ARTIFACT in "${ARTIFACTS[@]}"; do
       ;;
     *.dmg)
       echo "Gatekeeper assess (dmg): $ARTIFACT"
-      spctl --assess --type open --verbose=4 "$ARTIFACT"
+      spctl --assess \
+        --type open \
+        --context context:primary-signature \
+        --verbose=4 \
+        "$ARTIFACT"
 
       if codesign --verify --verbose=2 "$ARTIFACT" >/dev/null 2>&1; then
         echo "Code signature verify (dmg): $ARTIFACT"
